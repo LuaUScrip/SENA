@@ -6306,7 +6306,7 @@ do
 
 				for _, record in pairs(p231.records) do
 					if record.State == AreaEggs.States.Slot or record.State == AreaEggs.States.Dropped then
-						if record.BottomCFrame and not p231:isSkippedEgg(record.Uid) and p231:_matchesNormalFilter(record) then
+						if not p231:isSkippedEgg(record.Uid) and p231:_matchesNormalFilter(record) then
 							local Magnitude = (record.BottomCFrame.Position - HumanoidRootPart.Position).Magnitude
 							local v1003 = p231.catalog.resolve(record)
 							local v1004
@@ -29350,7 +29350,7 @@ do
 
 		local v4722, v4723, v4724, v4725, v4726, v4727, v4728, v4729, v4730, v4731
 		local v4732, __NOXV4PlayerSteal, v4734, v4735, v4736, v4737, v4738, v4739, v4740, v4741
-		local v4742, t216, t217, u4745, t218, v4793
+		local v4742, t216, t217, u4745, t218
 
 		do
 			local function v4747()
@@ -29826,7 +29826,7 @@ do
 		end
 
 		do
-			v4793 = v4742:AddTab({
+			local v4793 = v4742:AddTab({
 				Name = "Main",
 				Icon = "home"
 			})
