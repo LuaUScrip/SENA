@@ -2128,12 +2128,14 @@ local function adoptclaim()
 end
 
 do
+	-- Default: license list in the LuaUScrip/SENA repo. getgenv().NoxLicenseURL overrides it.
 	local okl, lurl = pcall(function()
 		return getgenv and getgenv().NoxLicenseURL
 	end)
-	if okl and type(lurl) == "string" and lurl ~= "" then
-		pcall(Chloex.LoadLicenseList, lurl)
+	if not (okl and type(lurl) == "string" and lurl ~= "") then
+		lurl = "https://raw.githubusercontent.com/LuaUScrip/SENA/refs/heads/main/license_keys.txt"
 	end
+	pcall(Chloex.LoadLicenseList, lurl)
 end
 
 adoptclaim()
