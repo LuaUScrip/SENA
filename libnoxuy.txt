@@ -2041,13 +2041,59 @@ end
 
 Chloex.LocalKeyHash = "90de0d6c5b9d9bca"
 
-function Chloex.KeyValid(key)
-	local k = (tostring(key or ""):gsub("%s+", "")):upper()
-	if k == "" then
+-- License list: one entry per line, "hash,tier,expires" (expires = unix time, 0 = lifetime).
+-- Lines starting with # are comments. Loaded from getgenv().NoxLicenseURL.
+Chloex.LicenseList = Chloex.LicenseList or {}
+
+function Chloex.LoadLicenseList(url)
+	if type(url) ~= "string" or url == "" then
 		return false
 	end
+	local ok, raw = pcall(function()
+		return game:HttpGet(url, true)
+	end)
+	if not ok or type(raw) ~= "string" or raw == "" then
+		return false
+	end
+	local list = {}
+	for line in raw:gmatch("[^\r\n]+") do
+		line = line:gsub("^%s+", ""):gsub("%s+$", "")
+		if line ~= "" and line:sub(1, 1) ~= "#" then
+			local h, tier, exp = line:match("^(%x+)%s*,%s*(%a+)%s*,?%s*(%d*)")
+			if h then
+				list[h:lower()] = { tier = tier:lower(), expires = tonumber(exp) or 0 }
+			end
+		end
+	end
+	Chloex.LicenseList = list
+	return true
+end
+
+-- Returns { tier, expires } for a valid, unexpired key, otherwise nil.
+function Chloex.KeyEntry(key)
+	local k = (tostring(key or "")):gsub("%s+", ""):upper()
+	if k == "" then
+		return nil
+	end
 	local ok, hashed = pcall(Chloex.HashKey, k)
-	return ok and hashed == Chloex.LocalKeyHash
+	if not ok then
+		return nil
+	end
+	local entry = Chloex.LicenseList[hashed]
+	if entry == nil and hashed == Chloex.LocalKeyHash then
+		entry = { tier = "donator", expires = 0 }
+	end
+	if entry == nil then
+		return nil
+	end
+	if entry.expires > 0 and os.time() > entry.expires then
+		return nil
+	end
+	return entry
+end
+
+function Chloex.KeyValid(key)
+	return Chloex.KeyEntry(key) ~= nil
 end
 
 -- Runs when the lib loads and again when a Window is built: re-verifies the
@@ -2081,12 +2127,21 @@ local function adoptclaim()
 	writetierglobals()
 end
 
+do
+	local okl, lurl = pcall(function()
+		return getgenv and getgenv().NoxLicenseURL
+	end)
+	if okl and type(lurl) == "string" and lurl ~= "" then
+		pcall(Chloex.LoadLicenseList, lurl)
+	end
+end
+
 adoptclaim()
 
 -- Lock or unlock every donator element to match the current tier. Each lock
 -- controller is idempotent, so calling this on every tier report is cheap.
 local function applydonatorlocks()
-	local donator = Chloex._isDonator == true
+	local donator = Chloex._isDonator == true or Chloex:IsOwner()
 	local trial = Chloex._isTrial == true
 	for i = #Chloex.LockRegistry, 1, -1 do
 		local lock = Chloex.LockRegistry[i]
@@ -2152,6 +2207,9 @@ end
 -- Ordinary Locked/Donator elements open for donator OR trial; Locked2/
 -- DonatorOnly elements open only for a real donator (trial stays locked).
 local function tierallows(donatoronly)
+	if Chloex:IsOwner() then
+		return true
+	end
 	if donatoronly then
 		return Chloex._isDonator == true
 	end
@@ -3820,7 +3878,9 @@ function Chloex:Window(guiconfig)
 	local function refreshdonatorpill()
 		local info = Chloex.DonatorInfo
 		local text, color
-		if istrial() then
+		if Chloex:IsOwner() then
+			text, color = "Owner", theme.Gold
+		elseif istrial() then
 			text, color = "Trial", theme.Blue
 		elseif isdonator() then
 			local days = info and tonumber(info.days_left)
