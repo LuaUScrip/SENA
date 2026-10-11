@@ -6306,7 +6306,7 @@ do
 
 				for _, record in pairs(p231.records) do
 					if record.State == AreaEggs.States.Slot or record.State == AreaEggs.States.Dropped then
-						if not p231:isSkippedEgg(record.Uid) and p231:_matchesNormalFilter(record) then
+						if record.BottomCFrame and not p231:isSkippedEgg(record.Uid) and p231:_matchesNormalFilter(record) then
 							local Magnitude = (record.BottomCFrame.Position - HumanoidRootPart.Position).Magnitude
 							local v1003 = p231.catalog.resolve(record)
 							local v1004
@@ -29691,8 +29691,8 @@ do
 				if tostring(background) ~= "" then
 					windowConfig.Image = background
 					windowConfig.BackgroundFallback = "rbxthumb://type=Asset&id=131473031423322&w=768&h=432"
-					windowConfig.BackgroundDim = 0.7
-					windowConfig.RowTransparency = 0.1
+					windowConfig.BackgroundDim = 0.45
+					windowConfig.RowTransparency = 0.35
 				end
 				return windowConfig
 			end)())
@@ -29830,7 +29830,6 @@ do
 				Name = "Main",
 				Icon = "home"
 			})
-			t216.stealTab = v4793
 			local v4794 = v4793:AddSection("Auto Steal")
 
 			t216.autoSteal = v4794:AddToggle({
@@ -31048,7 +31047,7 @@ Missing: %s]], __NOXV4ScrambleTradeIn.banner, __NOXV4ScrambleTradeIn.status, mat
 		end
 
 		do
-			local v4869 = t216.stealTab
+			local v4869 = v4793
 			local v4870 = v4869:AddSection("Steal From Players")
 
 			t216.stealPlayers = v4870:AddToggle({
