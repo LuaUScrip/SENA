@@ -29350,7 +29350,7 @@ do
 
 		local v4722, v4723, v4724, v4725, v4726, v4727, v4728, v4729, v4730, v4731
 		local v4732, __NOXV4PlayerSteal, v4734, v4735, v4736, v4737, v4738, v4739, v4740, v4741
-		local v4742, t216, t217, u4745, t218
+		local v4742, t216, t217, u4745, t218, v4793
 
 		do
 			local function v4747()
@@ -29826,7 +29826,7 @@ do
 		end
 
 		do
-			local v4793 = v4742:AddTab({
+			v4793 = v4742:AddTab({
 				Name = "Main",
 				Icon = "home"
 			})
