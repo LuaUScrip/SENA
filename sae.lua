@@ -11060,6 +11060,7 @@ do
 					end
 
 					p453.stats.delivered = (p453.stats.delivered or 0) + 1
+					genv.__NOXV4StolenCount = (genv.__NOXV4StolenCount or 0) + 1
 
 					local __NOXV4Webhook = genv.__NOXV4Webhook
 
@@ -14651,7 +14652,7 @@ do
 		end
 		local function v2088()
 			if u2073 == nil then
-				u2073 = v2076("96240498384290") or false
+				u2073 = v2076("89777034528724") or false
 			end
 
 			return u2073 or nil
@@ -15026,7 +15027,7 @@ do
 					}
 				}
 			}
-			local v2148 = v2076("96240498384290")
+			local v2148 = v2076("89777034528724")
 
 			if v2148 then
 				t84.thumbnail = {
@@ -27211,7 +27212,7 @@ do
 			ImageLabel2.Position = UDim2.fromOffset(11, 23)
 			ImageLabel2.Size = UDim2.fromOffset(20, 20)
 			ImageLabel2.BackgroundTransparency = 1
-			ImageLabel2.Image = "rbxassetid://96240498384290"
+			ImageLabel2.Image = "rbxassetid://89777034528724"
 			ImageLabel2.ScaleType = Enum.ScaleType.Fit
 			ImageLabel2.Parent = Frame2
 
@@ -29673,14 +29674,71 @@ do
 			end
 
 			v4730()
-			v4742 = NOXLibOverride:Window({
-				Title = "NOX BETA |",
-				Footer = "Steal An Egg",
-				Folder = "NOXSAEv4",
-				Version = 1,
-				Color = Color3.fromRGB(232, 232, 238)
-			})
+			v4742 = NOXLibOverride:Window((function()
+				-- Custom background (default: bg.jpg in your repo). Replace it with another
+				-- https link or Roblox image id, or set getgenv().NOXBackground = "..."
+				-- before running this script. If the link cannot be downloaded, the NOX
+				-- decal below is used instead.
+				local background = genv.NOXBackground or "https://raw.githubusercontent.com/LuaUScrip/SENA/refs/heads/main/bg.jpg"
+				local windowConfig = {
+					Title = "NOX BETA |",
+					Footer = "Steal An Egg",
+					Folder = "NOXSAEv4",
+					Version = 1,
+					Color = Color3.fromRGB(232, 232, 238),
+					IconRail = true
+				}
+				if tostring(background) ~= "" then
+					windowConfig.Image = background
+					windowConfig.BackgroundFallback = "rbxthumb://type=Asset&id=131473031423322&w=768&h=432"
+					windowConfig.BackgroundDim = 0.7
+					windowConfig.RowTransparency = 0.1
+				end
+				return windowConfig
+			end)())
 			v4779(v4742)
+
+			-- Header chips: session timer, eggs stolen, ping.
+			pcall(function()
+				if type(v4742.AddHeaderChip) ~= "function" then
+					return
+				end
+
+				genv.__NOXV4StolenCount = 0
+				local startedAt = os.clock()
+				local timerChip = v4742:AddHeaderChip({ Icon = "clock", Text = "00:00", LayoutOrder = 1 })
+				local stolenChip = v4742:AddHeaderChip({ Icon = "egg", Text = "0 stolen", LayoutOrder = 2 })
+				local pingChip = v4742:AddHeaderChip({ Icon = "wifi", Text = "-- ms", LayoutOrder = 3 })
+
+				task.spawn(function()
+					while v16() do
+						local elapsed = math.floor(os.clock() - startedAt)
+						local clock
+						if elapsed >= 3600 then
+							clock = string.format("%d:%02d:%02d", elapsed // 3600, (elapsed % 3600) // 60, elapsed % 60)
+						else
+							clock = string.format("%02d:%02d", elapsed // 60, elapsed % 60)
+						end
+
+						local ping
+						pcall(function()
+							ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+						end)
+						if not tonumber(ping) or ping <= 0 then
+							pcall(function()
+								ping = game:GetService("Players").LocalPlayer:GetNetworkPing() * 2000
+							end)
+						end
+
+						pcall(function()
+							timerChip:SetText(clock)
+							stolenChip:SetText(tostring(genv.__NOXV4StolenCount or 0) .. " stolen")
+							pingChip:SetText(tonumber(ping) and (math.floor(ping + 0.5) .. " ms") or "-- ms")
+						end)
+						task.wait(1)
+					end
+				end)
+			end)
 			t216 = {}
 			t217 = { "Respawn Point" }
 
@@ -29715,7 +29773,9 @@ do
 
 			local v4791 = v4742:AddTab({
 				Name = "Admin Abuse",
-				Icon = "flame"
+				Icon = "flame",
+				StartActive = false,
+				LayoutOrder = 8
 			})
 
 			t216.autoStealCapture = v4791:AddSection("Capture The Egg"):AddToggle({
@@ -29770,6 +29830,7 @@ do
 				Name = "Main",
 				Icon = "home"
 			})
+			t216.stealTab = v4793
 			local v4794 = v4793:AddSection("Auto Steal")
 
 			t216.autoSteal = v4794:AddToggle({
@@ -30987,11 +31048,8 @@ Missing: %s]], __NOXV4ScrambleTradeIn.banner, __NOXV4ScrambleTradeIn.status, mat
 		end
 
 		do
-			local v4869 = v4742:AddTab({
-				Name = "Steal Players",
-				Icon = "swords"
-			})
-			local v4870 = v4869:AddSection("Auto Steal")
+			local v4869 = t216.stealTab
+			local v4870 = v4869:AddSection("Steal From Players")
 
 			t216.stealPlayers = v4870:AddToggle({
 				Title = "Auto Steal From Players",
@@ -31329,7 +31387,8 @@ Missing: %s]], __NOXV4ScrambleTradeIn.banner, __NOXV4ScrambleTradeIn.status, mat
 
 		v4742:AddTab({
 			Name = "Donate",
-			Icon = "donator"
+			Icon = "donator",
+			LayoutOrder = -10
 		}):AddSection("Support NOX", true):AddSupportCard({})
 
 		do
