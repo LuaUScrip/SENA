@@ -2039,61 +2039,37 @@ function Chloex.HashKey(str)
 	return string.format("%08x%08x", h1, h2)
 end
 
-Chloex.LocalKeyHash = "90de0d6c5b9d9bca"
+-- Tier colors for the footer status pill.
+Chloex.TierColors = {
+	VIP = Color3.fromRGB(110, 220, 140),
+	DONATOR = Color3.fromRGB(255, 205, 80),
+	PARTNER = Color3.fromRGB(90, 200, 235),
+	["CONTENT CREATOR"] = Color3.fromRGB(175, 125, 255),
+	ADMIN = Color3.fromRGB(255, 95, 95),
+	["NOX WIFE"] = Color3.fromRGB(255, 125, 190),
+	OWNER = Color3.fromRGB(255, 165, 55),
+}
 
--- License list: one entry per line, "hash,tier,expires" (expires = unix time, 0 = lifetime).
--- Lines starting with # are comments. Loaded from getgenv().NoxLicenseURL.
-Chloex.LicenseList = Chloex.LicenseList or {}
+-- Hash of each license key -> the status it gives (keys themselves are not
+-- stored in the script).
+Chloex.KeyTiers = {
+	["bb70f4beb0c007a2"] = "VIP",
+	["3729e0ef3da0424d"] = "DONATOR",
+	["ef93b470cddd8ae2"] = "PARTNER",
+	["7b839e83ae6ed00f"] = "CONTENT CREATOR",
+	["db3b3ac6a51fe0c6"] = "ADMIN",
+	["200d0e44f9fd4b0c"] = "NOX WIFE",
+	["ccd3f3f1ec731671"] = "OWNER"
+}
 
-function Chloex.LoadLicenseList(url)
-	if type(url) ~= "string" or url == "" then
-		return false
-	end
-	local ok, raw = pcall(function()
-		return game:HttpGet(url, true)
-	end)
-	if not ok or type(raw) ~= "string" or raw == "" then
-		return false
-	end
-	local list = {}
-	for line in raw:gmatch("[^\r\n]+") do
-		line = line:gsub("^%s+", ""):gsub("%s+$", "")
-		if line ~= "" and line:sub(1, 1) ~= "#" then
-			local h, tier, exp = line:match("^(%x+)%s*,%s*(%a+)%s*,?%s*(%d*)")
-			if h then
-				list[h:lower()] = { tier = tier:lower(), expires = tonumber(exp) or 0 }
-			end
-		end
-	end
-	Chloex.LicenseList = list
-	return true
-end
-
--- Returns { tier, expires } for a valid, unexpired key, otherwise nil.
-function Chloex.KeyEntry(key)
-	local k = (tostring(key or "")):gsub("%s+", ""):upper()
+-- Returns the tier name for a valid key, or false.
+function Chloex.KeyValid(key)
+	local k = (tostring(key or ""):gsub("%s+", "")):upper()
 	if k == "" then
-		return nil
+		return false
 	end
 	local ok, hashed = pcall(Chloex.HashKey, k)
-	if not ok then
-		return nil
-	end
-	local entry = Chloex.LicenseList[hashed]
-	if entry == nil and hashed == Chloex.LocalKeyHash then
-		entry = { tier = "donator", expires = 0 }
-	end
-	if entry == nil then
-		return nil
-	end
-	if entry.expires > 0 and os.time() > entry.expires then
-		return nil
-	end
-	return entry
-end
-
-function Chloex.KeyValid(key)
-	return Chloex.KeyEntry(key) ~= nil
+	return ok and Chloex.KeyTiers[hashed] or false
 end
 
 -- Runs when the lib loads and again when a Window is built: re-verifies the
@@ -2101,6 +2077,15 @@ end
 local function adoptclaim()
 	if Chloex._isDonator or Chloex._isTrial then
 		return
+	end
+	if type(Chloex.IsOwner) == "function" then
+		local okowner, isowneracct = pcall(Chloex.IsOwner, Chloex)
+		if okowner and isowneracct then
+			Chloex.DonatorInfo = { ok = true, valid = true, tier = "owner", name = "OWNER", label = "OWNER", expires = 0 }
+			Chloex._isDonator = true
+			writetierglobals()
+			return
+		end
 	end
 	if type(Chloex.GetSavedKey) ~= "function" then
 		return
@@ -2119,23 +2104,13 @@ local function adoptclaim()
 		end
 		return
 	end
-	if not Chloex.KeyValid(k) then
+	local tiername = Chloex.KeyValid(k)
+	if not tiername then
 		return
 	end
-	Chloex.DonatorInfo = { ok = true, valid = true, tier = "donator", name = "Nox Donator", days_left = 9999, expires = 0 }
+	Chloex.DonatorInfo = { ok = true, valid = true, tier = tiername:lower(), name = tiername, label = tiername, expires = 0 }
 	Chloex._isDonator = true
 	writetierglobals()
-end
-
-do
-	-- Default: license list in the LuaUScrip/SENA repo. getgenv().NoxLicenseURL overrides it.
-	local okl, lurl = pcall(function()
-		return getgenv and getgenv().NoxLicenseURL
-	end)
-	if not (okl and type(lurl) == "string" and lurl ~= "") then
-		lurl = "https://raw.githubusercontent.com/LuaUScrip/SENA/refs/heads/main/license_keys.txt"
-	end
-	pcall(Chloex.LoadLicenseList, lurl)
 end
 
 adoptclaim()
@@ -2143,7 +2118,7 @@ adoptclaim()
 -- Lock or unlock every donator element to match the current tier. Each lock
 -- controller is idempotent, so calling this on every tier report is cheap.
 local function applydonatorlocks()
-	local donator = Chloex._isDonator == true or Chloex:IsOwner()
+	local donator = Chloex._isDonator == true
 	local trial = Chloex._isTrial == true
 	for i = #Chloex.LockRegistry, 1, -1 do
 		local lock = Chloex.LockRegistry[i]
@@ -2209,9 +2184,6 @@ end
 -- Ordinary Locked/Donator elements open for donator OR trial; Locked2/
 -- DonatorOnly elements open only for a real donator (trial stays locked).
 local function tierallows(donatoronly)
-	if Chloex:IsOwner() then
-		return true
-	end
 	if donatoronly then
 		return Chloex._isDonator == true
 	end
@@ -2518,7 +2490,8 @@ function Chloex:CheckDonatorKey(customkey)
 				return false, "network_error"
 			end
 		elseif Chloex.KeyValid(key) then
-			res = { ok = true, valid = true, tier = "donator", name = "Nox Donator", days_left = 9999, expires = 0 }
+			local tiername = Chloex.KeyValid(key)
+			res = { ok = true, valid = true, tier = tiername:lower(), name = tiername, label = tiername, expires = 0 }
 		else
 			res = { ok = true, valid = false, reason = "invalid" }
 		end
@@ -3875,21 +3848,25 @@ function Chloex:Window(guiconfig)
 
 	local _, fpslabel = makepill(statusstrip, { Name = "Fps", LayoutOrder = 2, Icon = "activity", Text = "-- FPS" })
 
-	local _, donatorlabel, donatoricon = makepill(statusstrip, { Name = "Donator", LayoutOrder = 3, Icon = "crown", Text = "Free" })
+	local _, donatorlabel, donatoricon = makepill(statusstrip, { Name = "Donator", LayoutOrder = 3, Icon = "crown", Text = "FREE" })
 
 	local function refreshdonatorpill()
 		local info = Chloex.DonatorInfo
 		local text, color
-		if Chloex:IsOwner() then
-			text, color = "Owner", theme.Gold
-		elseif istrial() then
-			text, color = "Trial", theme.Blue
+		if istrial() then
+			text, color = "TRIAL", theme.Blue
+		elseif isowner() then
+			text, color = "OWNER", Chloex.TierColors.OWNER
 		elseif isdonator() then
+			local label = info and (info.label or (info.tier and tostring(info.tier):gsub("_", " "):upper())) or "DONATOR"
 			local days = info and tonumber(info.days_left)
-			text = days and ("Donator · " .. tostring(math.floor(days)) .. "d") or "Donator"
-			color = theme.Gold
+			text = label
+			if days and days < 9999 then
+				text = label .. " · " .. tostring(math.floor(days)) .. "d"
+			end
+			color = Chloex.TierColors[label] or theme.Gold
 		else
-			text, color = "Free", theme.SubText
+			text, color = "FREE", theme.SubText
 		end
 		donatorlabel.Text = text
 		donatorlabel.TextColor3 = color
@@ -8886,6 +8863,7 @@ function Chloex:Window(guiconfig)
 				local donator = isdonator()
 				local doninfo = Chloex.DonatorInfo
 				local daysleft = doninfo and tonumber(doninfo.days_left) or 0
+				local tierlabel = doninfo and doninfo.label or "Donator"
 
 				local keyheaderrow = instance.frame(keybox)
 				keyheaderrow.BackgroundTransparency = 1
@@ -8896,7 +8874,7 @@ function Chloex:Window(guiconfig)
 				keyheader.BackgroundTransparency = 1
 				keyheader.Size = UDim2.new(1, -120, 1, 0)
 				keyheader.Font = Enum.Font.GothamBold
-				keyheader.Text = donator and "Donator Status: Active" or "License Key Activation"
+				keyheader.Text = donator and (tierlabel .. " Status: Active") or "License Key Activation"
 				keyheader.TextColor3 = theme.Text
 				keyheader.TextSize = 11
 				keyheader.TextXAlignment = Enum.TextXAlignment.Left
@@ -8912,7 +8890,7 @@ function Chloex:Window(guiconfig)
 				statusbadgetext.BackgroundTransparency = 1
 				statusbadgetext.Size = UDim2.new(1, 0, 1, 0)
 				statusbadgetext.Font = Enum.Font.GothamBold
-				statusbadgetext.Text = donator and (daysleft > 0 and (tostring(daysleft) .. " Days Left") or "Active") or "Not Active"
+				statusbadgetext.Text = donator and (daysleft > 0 and daysleft < 9999 and (tostring(daysleft) .. " Days Left") or tierlabel) or "Not Active"
 				statusbadgetext.TextColor3 = donator and theme.Good or theme.SubText
 				statusbadgetext.TextSize = 10
 
@@ -8961,8 +8939,9 @@ function Chloex:Window(guiconfig)
 
 				local statuslabel = label(
 					keybox,
-					donator and string.format("Donator VIP Active (%d days remaining). All features unlocked.", daysleft > 0 and daysleft or 30)
-						or "Enter your license key above to activate Donator VIP.",
+					donator and ((daysleft > 0 and daysleft < 9999) and string.format("%s Active (%d days remaining). All features unlocked.", tierlabel, daysleft)
+						or (tierlabel .. " Active. All features unlocked."))
+						or "Enter your license key above to unlock your status.",
 					10,
 					theme.SubText,
 					Enum.Font.Gotham,
@@ -8994,19 +8973,21 @@ function Chloex:Window(guiconfig)
 						local ok, res = Chloex:CheckDonatorKey(entered)
 						if ok and type(res) == "table" and res.valid then
 							-- CheckDonatorKey already set the tier (trial keys stay trial)
-							local days = tonumber(res.days_left) or 30
+							local days = tonumber(res.days_left)
+							local tierlabel = res.label or "Donator"
+							local hasdays = days and days < 9999
 							redeembtn.Text = "Activated Successfully! ✓"
-							keyheader.Text = "Donator Status: Active"
+							keyheader.Text = tierlabel .. " Status: Active"
 							statusbg.ImageColor3 = Color3.fromRGB(25, 47, 33)
-							statusbadgetext.Text = tostring(days) .. " Days Left"
+							statusbadgetext.Text = hasdays and (tostring(days) .. " Days Left") or tierlabel
 							statusbadgetext.TextColor3 = theme.Good
-							statuslabel.Text = string.format("Donator VIP Active! (%d days remaining)", days)
+							statuslabel.Text = hasdays and string.format("%s Active! (%d days remaining)", tierlabel, days) or (tierlabel .. " Active!")
 							statuslabel.TextColor3 = theme.Good
 
 							Chloex:Notify({
 								Title = "Nox",
-								Description = "Donator VIP",
-								Content = string.format("License verified! %d days of Donator access active.", days),
+								Description = "NOX " .. tierlabel,
+								Content = hasdays and string.format("License verified! %d days of access active.", days) or ("License verified! " .. tierlabel .. " status active."),
 								Duration = 6,
 								Color = theme.Good,
 							})
