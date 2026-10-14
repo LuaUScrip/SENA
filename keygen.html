@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Key maker - NOX</title>
+<meta name="theme-color" content="#0a0a0b">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --panel: #111113;
+  --line: #2a2a2e;
+  --text: #e8e4da;
+  --dim: #8b877e;
+  --accent: #cfff2e;
+  --accent-ink: #11140a;
+  --bad: #ff5f5f;
+  --display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --wrap: 1120px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; background: rgba(10,10,11,.92); backdrop-filter: blur(6px); }
+.top .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
+.mark { font: 400 26px/1 var(--display); letter-spacing: .04em; text-decoration: none; margin-right: auto; }
+.nav { display: flex; gap: 22px; font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.nav a { text-decoration: none; color: var(--dim); padding: 6px 0; border-bottom: 1px solid transparent; }
+.nav a:hover, .nav a[aria-current] { color: var(--text); border-bottom-color: var(--accent); }
+.btn {
+  display: inline-block; font: 600 13px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
+  padding: 12px 18px; border: 1px solid var(--text); text-decoration: none; background: transparent; color: var(--text); cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn:hover { background: var(--text); color: var(--bg); }
+.btn.solid { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.solid:hover { background: var(--text); border-color: var(--text); }
+.btn.small { padding: 9px 12px; font-size: 11px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* hero */
+.hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--dim); margin: 0 0 18px; }
+.hero h1 { font: 400 clamp(110px, 24vw, 280px)/.82 var(--display); letter-spacing: .01em; margin: 0 0 6px -6px; text-transform: uppercase; }
+.hero .lede { max-width: 560px; font-size: 19px; line-height: 1.5; margin: 22px 0 36px; }
+.slab { border: 1px solid var(--line); background: var(--panel); max-width: 760px; }
+.slab-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+.slab code { display: block; padding: 18px 14px; font: 400 13.5px/1.55 var(--mono); overflow-x: auto; white-space: pre; color: var(--accent); }
+.slab-foot { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.live { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); display: inline-block; }
+.live.on i { background: var(--accent); box-shadow: 0 0 0 4px rgba(207,255,46,.15); }
+.live.on { color: var(--text); }
+
+/* sections */
+section.block { padding: 72px 0; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; grid-template-columns: 140px 1fr; gap: 24px; margin-bottom: 40px; align-items: baseline; }
+.sec-no { font: 500 12px/1 var(--mono); letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.sec-head h2 { font: 400 clamp(36px, 6vw, 64px)/.95 var(--display); text-transform: uppercase; margin: 0; letter-spacing: .01em; }
+.sec-head p { grid-column: 2; margin: 0; max-width: 560px; color: var(--dim); }
+
+/* feature index */
+.index { border-top: 1px solid var(--text); }
+.index-row { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.index-row h3 { font: 600 13px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .1em; margin: 0; padding-top: 3px; }
+.index-row p { margin: 0; color: #c9c5bb; line-height: 1.75; }
+.index-row p span { white-space: nowrap; }
+.index-row p span:not(:last-child)::after { content: "/"; color: var(--dim); margin: 0 .35em 0 .55em; }
+
+/* ranks */
+.ranks { width: 100%; border-collapse: collapse; }
+.ranks th { text-align: left; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); padding: 0 0 12px; border-bottom: 1px solid var(--text); }
+.ranks td { padding: 15px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ranks td:first-child { width: 230px; }
+.rank { font: 600 13px/1 var(--mono); letter-spacing: .08em; display: inline-flex; align-items: center; gap: 10px; }
+.rank::before { content: ""; width: 10px; height: 10px; background: var(--c, var(--dim)); }
+.ranks td:last-child { color: #c9c5bb; }
+
+/* steps */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--text); }
+.steps li { counter-increment: s; padding: 22px 24px 8px 0; border-right: 1px solid var(--line); }
+.steps li + li { padding-left: 24px; }
+.steps li:last-child { border-right: 0; }
+.steps li::before { content: "0" counter(s); font: 400 44px/1 var(--display); color: var(--accent); display: block; margin-bottom: 14px; }
+.steps b { display: block; margin-bottom: 6px; }
+.steps p { margin: 0; color: #c9c5bb; font-size: 15px; }
+
+/* news */
+.news-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--text); }
+.news-item { display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.news-item time { font: 500 12px/1.6 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+.news-item h3 { margin: 0 0 4px; font: 600 17px/1.35 var(--sans); }
+.news-item p { margin: 0; color: #c9c5bb; white-space: pre-wrap; }
+.news-item .by { font: 500 11px/1 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
+.muted { color: var(--dim); }
+
+/* forms */
+.panel { border: 1px solid var(--line); background: var(--panel); padding: 24px; }
+label.f { display: block; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 8px; }
+input[type=text], input[type=password], input[type=number], textarea, select {
+  width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 12px 14px;
+  font: 400 14px/1.4 var(--mono); border-radius: 0; outline: none;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { min-height: 96px; resize: vertical; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.row > * { flex: 1 1 160px; }
+.row > .btn { flex: 0 0 auto; }
+.result { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; font: 400 14px/1.7 var(--mono); }
+.result dl { display: grid; grid-template-columns: 150px 1fr; gap: 4px 16px; margin: 0; }
+.result dt { color: var(--dim); text-transform: uppercase; font-size: 11px; letter-spacing: .1em; padding-top: 3px; }
+.result dd { margin: 0; }
+.err { color: var(--bad); }
+.ok { color: var(--accent); }
+
+footer { padding: 36px 0 60px; font: 400 13px/1.7 var(--mono); color: var(--dim); }
+footer .wrap { display: flex; gap: 28px; justify-content: space-between; flex-wrap: wrap; }
+footer a { color: var(--text); }
+.fine { max-width: 520px; }
+
+/* admin */
+.admin-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 40px 0 80px; }
+.tabs { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--text); position: sticky; top: 80px; align-self: start; }
+.tabs button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--dim); font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; padding: 14px 0; cursor: pointer; }
+.tabs button[aria-selected=true] { color: var(--text); box-shadow: inset 3px 0 0 var(--accent); padding-left: 12px; }
+.tbl { width: 100%; border-collapse: collapse; font: 400 12.5px/1.5 var(--mono); }
+.tbl th { text-align: left; color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding: 0 10px 10px 0; border-bottom: 1px solid var(--text); }
+.tbl td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-all; }
+.tbl td.act { white-space: nowrap; }
+.tbl .btn { margin-right: 6px; }
+.keybox { background: var(--bg); border: 1px dashed var(--accent); padding: 14px; font: 500 13px/1.8 var(--mono); color: var(--accent); white-space: pre-wrap; user-select: all; margin-top: 14px; }
+.hidden { display: none !important; }
+.stack > * + * { margin-top: 18px; }
+.stat-row { display: flex; gap: 40px; flex-wrap: wrap; }
+.stat b { display: block; font: 400 52px/1 var(--display); }
+.stat span { font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); }
+
+@media (max-width: 820px) {
+  .nav { display: none; }
+  .top .wrap { gap: 12px; }
+  .sec-head { grid-template-columns: 1fr; gap: 10px; }
+  .sec-head p { grid-column: 1; }
+  .index-row, .news-item { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .index-row p span { white-space: normal; }
+  .steps { grid-template-columns: 1fr; }
+  .steps li, .steps li + li { border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .ranks td:first-child { width: 150px; }
+  .admin-grid { grid-template-columns: 1fr; }
+  .tabs { flex-direction: row; overflow-x: auto; position: static; border-top: 0; border-bottom: 1px solid var(--text); }
+  .tabs button { border-bottom: 0; padding: 12px 14px; white-space: nowrap; }
+  .tabs button[aria-selected=true] { box-shadow: inset 0 -3px 0 var(--accent); padding-left: 14px; }
+  .result dl { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+
+.out { background: var(--bg); border: 1px dashed var(--accent); padding: 14px; font: 500 12.5px/1.8 var(--mono); color: var(--accent); white-space: pre-wrap; word-break: break-all; margin-top: 12px; user-select: all; }
+.out.dim { border-color: var(--line); color: var(--text); }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="mark" href="#">NOX</a><span class="nav" style="margin-left:auto"><a href="#">Key maker</a></span></div></header>
+<main class="wrap" style="padding:48px 24px 90px">
+  <p class="eyebrow">Offline keys</p>
+  <h2 style="font:400 56px/1 var(--display);text-transform:uppercase;margin:0 0 14px">Key maker</h2>
+  <p class="muted" style="max-width:600px">Makes keys for the offline mode of libnoxuy.txt. Everything runs on this page; nothing is sent anywhere. The library only stores a hash of each key, so write the keys down: they cannot be recovered from the hash.</p>
+
+  <div class="panel stack" style="margin-top:28px;max-width:760px">
+    <div class="row">
+      <div><label class="f" for="rank">Rank</label>
+        <select id="rank"><option>VIP</option><option>DONATOR</option><option>PARTNER</option><option>CONTENT CREATOR</option><option>ADMIN</option><option>NOX WIFE</option><option>OWNER</option></select></div>
+      <div><label class="f" for="count">How many</label><input type="number" id="count" value="1" min="1" max="20"></div>
+      <button class="btn solid" id="make" type="button">Make keys</button>
+    </div>
+    <div id="made" class="hidden">
+      <label class="f">Keys (give these to people)</label>
+      <div class="out" id="keys"></div>
+      <label class="f" style="margin-top:18px">Lines to paste into libnoxuy.txt, inside <code>Chloex.KeyTiers = { ... }</code></label>
+      <div class="out dim" id="lines"></div>
+      <div class="row" style="margin-top:12px"><button class="btn small" id="copy-lines" type="button">Copy lines</button><button class="btn small" id="copy-keys" type="button">Copy keys</button></div>
+    </div>
+  </div>
+
+  <div class="panel stack" style="margin-top:22px;max-width:760px">
+    <label class="f" for="chk">Check an existing key</label>
+    <div class="row"><input type="text" id="chk" placeholder="NOX-XXXXXXXX-XXXXXXXX-XXXXXXXX" spellcheck="false"><button class="btn" id="chk-go" type="button">Show hash</button></div>
+    <div class="out dim hidden" id="chk-out"></div>
+  </div>
+</main>
+<script>
+function hex8(n) { return ("00000000" + (n >>> 0).toString(16)).slice(-8); }
+// same algorithm as Chloex.HashKey in libnoxuy.txt
+function hashKey(key) {
+  var s = "nox|" + key.replace(/\s+/g, "").toUpperCase(), h1 = 2166136261, h2 = 5381;
+  for (var i = 0; i < s.length; i++) {
+    var b = s.charCodeAt(i) & 255;
+    h1 = (h1 ^ b) >>> 0; h1 = Math.imul(h1, 16777619) >>> 0;
+    h2 = (h2 * 33 + b) >>> 0;
+  }
+  return hex8(h1) + hex8(h2);
+}
+function part() { var a = new Uint32Array(1); crypto.getRandomValues(a); return hex8(a[0]).toUpperCase(); }
+function makeKey() { return "NOX-" + part() + "-" + part() + "-" + part(); }
+function $(s) { return document.querySelector(s); }
+function copy(text, btn) {
+  var done = function () { var o = btn.textContent; btn.textContent = "Copied"; setTimeout(function () { btn.textContent = o; }, 1200); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
+}
+$("#make").addEventListener("click", function () {
+  var rank = $("#rank").value, n = Math.min(Math.max(parseInt($("#count").value, 10) || 1, 1), 20), keys = [], lines = [];
+  for (var i = 0; i < n; i++) { var k = makeKey(); keys.push(k); lines.push('\t["' + hashKey(k) + '"] = "' + rank + '",'); }
+  $("#keys").textContent = keys.join("\n");
+  $("#lines").textContent = lines.join("\n");
+  $("#made").classList.remove("hidden");
+});
+$("#copy-lines").addEventListener("click", function () { copy($("#lines").textContent, this); });
+$("#copy-keys").addEventListener("click", function () { copy($("#keys").textContent, this); });
+$("#chk-go").addEventListener("click", function () {
+  var k = $("#chk").value.trim(), out = $("#chk-out");
+  out.classList.remove("hidden");
+  out.textContent = k ? 'Hash: ' + hashKey(k) : "Type a key first.";
+});
+</script>
+</body>
+</html>

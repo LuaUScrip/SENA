@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOX - Roblox script hub</title>
+<meta name="description" content="NOX - Roblox script hub.">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20256%22%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%22253%22%20height%3D%22253%22%20rx%3D%2251.2%22%20fill%3D%22%230a0a0b%22%20stroke%3D%22%232a2a2e%22%20stroke-width%3D%223%22%2F%3E%3Cpath%20fill%3D%22%23e8e4da%22%20d%3D%22M15.36%2071.68h21.5v102.4h-21.5z%20M63.49%2071.68h21.5v102.4h-21.5z%20M15.36%2071.68h26.88L84.99%20174.08h-26.88z%22%2F%3E%3Crect%20x%3D%2293.18%22%20y%3D%2271.68%22%20width%3D%2269.63%22%20height%3D%22102.4%22%20rx%3D%2223.67%22%20fill%3D%22%23e8e4da%22%2F%3E%3Crect%20x%3D%22114.69%22%20y%3D%2293.18%22%20width%3D%2226.62%22%20height%3D%2259.39%22%20rx%3D%229.75%22%20fill%3D%22%230a0a0b%22%2F%3E%3Cpath%20fill%3D%22%23e8e4da%22%20d%3D%22M171.01%2071.68h22.58L240.64%20174.08h-22.58z%20M218.06%2071.68h22.58L193.59%20174.08h-22.58z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="alternate icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NOX - Roblox script hub">
+<meta property="og:description" content="Roblox script hub.">
+<meta property="og:image" content="https://luauscrip.github.io/SENA/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --panel: #111113;
+  --line: #2a2a2e;
+  --text: #e8e4da;
+  --dim: #8b877e;
+  --accent: #cfff2e;
+  --accent-ink: #11140a;
+  --bad: #ff5f5f;
+  --display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --wrap: 1120px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; background: rgba(10,10,11,.92); backdrop-filter: blur(6px); }
+.top .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
+.mark { font: 400 26px/1 var(--display); letter-spacing: .04em; text-decoration: none; margin-right: auto; }
+.nav { display: flex; gap: 22px; font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.nav a { text-decoration: none; color: var(--dim); padding: 6px 0; border-bottom: 1px solid transparent; }
+.nav a:hover, .nav a[aria-current] { color: var(--text); border-bottom-color: var(--accent); }
+.btn {
+  display: inline-block; font: 600 13px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
+  padding: 12px 18px; border: 1px solid var(--text); text-decoration: none; background: transparent; color: var(--text); cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn:hover { background: var(--text); color: var(--bg); }
+.btn.solid { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.solid:hover { background: var(--text); border-color: var(--text); }
+.btn.small { padding: 9px 12px; font-size: 11px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* hero */
+.hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--dim); margin: 0 0 18px; }
+.hero h1 { font: 400 clamp(110px, 24vw, 280px)/.82 var(--display); letter-spacing: .01em; margin: 0 0 6px -6px; text-transform: uppercase; }
+.hero .lede { max-width: 560px; font-size: 19px; line-height: 1.5; margin: 22px 0 36px; }
+.slab { border: 1px solid var(--line); background: var(--panel); max-width: 760px; }
+.slab-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+.slab code { display: block; padding: 18px 14px; font: 400 13.5px/1.55 var(--mono); overflow-x: auto; white-space: pre; color: var(--accent); }
+.slab-foot { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.live { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); display: inline-block; }
+.live.on i { background: var(--accent); box-shadow: 0 0 0 4px rgba(207,255,46,.15); }
+.live.on { color: var(--text); }
+
+/* sections */
+section.block { padding: 72px 0; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; grid-template-columns: 140px 1fr; gap: 24px; margin-bottom: 40px; align-items: baseline; }
+.sec-no { font: 500 12px/1 var(--mono); letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.sec-head h2 { font: 400 clamp(36px, 6vw, 64px)/.95 var(--display); text-transform: uppercase; margin: 0; letter-spacing: .01em; }
+.sec-head p { grid-column: 2; margin: 0; max-width: 560px; color: var(--dim); }
+
+/* feature index */
+.index { border-top: 1px solid var(--text); }
+.index-row { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.index-row h3 { font: 600 13px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .1em; margin: 0; padding-top: 3px; }
+.index-row p { margin: 0; color: #c9c5bb; line-height: 1.75; }
+.index-row p span { white-space: nowrap; }
+.index-row p span:not(:last-child)::after { content: "/"; color: var(--dim); margin: 0 .35em 0 .55em; }
+
+/* ranks */
+.ranks { width: 100%; border-collapse: collapse; }
+.ranks th { text-align: left; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); padding: 0 0 12px; border-bottom: 1px solid var(--text); }
+.ranks td { padding: 15px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ranks td:first-child { width: 230px; }
+.rank { font: 600 13px/1 var(--mono); letter-spacing: .08em; display: inline-flex; align-items: center; gap: 10px; }
+.rank::before { content: ""; width: 10px; height: 10px; background: var(--c, var(--dim)); }
+.ranks td:last-child { color: #c9c5bb; }
+
+/* steps */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--text); }
+.steps li { counter-increment: s; padding: 22px 24px 8px 0; border-right: 1px solid var(--line); }
+.steps li + li { padding-left: 24px; }
+.steps li:last-child { border-right: 0; }
+.steps li::before { content: "0" counter(s); font: 400 44px/1 var(--display); color: var(--accent); display: block; margin-bottom: 14px; }
+.steps b { display: block; margin-bottom: 6px; }
+.steps p { margin: 0; color: #c9c5bb; font-size: 15px; }
+
+/* news */
+.news-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--text); }
+.news-item { display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.news-item time { font: 500 12px/1.6 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+.news-item h3 { margin: 0 0 4px; font: 600 17px/1.35 var(--sans); }
+.news-item p { margin: 0; color: #c9c5bb; white-space: pre-wrap; }
+.news-item .by { font: 500 11px/1 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
+.muted { color: var(--dim); }
+
+/* forms */
+.panel { border: 1px solid var(--line); background: var(--panel); padding: 24px; }
+label.f { display: block; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 8px; }
+input[type=text], input[type=password], input[type=number], textarea, select {
+  width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 12px 14px;
+  font: 400 14px/1.4 var(--mono); border-radius: 0; outline: none;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { min-height: 96px; resize: vertical; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.row > * { flex: 1 1 160px; }
+.row > .btn { flex: 0 0 auto; }
+.result { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; font: 400 14px/1.7 var(--mono); }
+.result dl { display: grid; grid-template-columns: 150px 1fr; gap: 4px 16px; margin: 0; }
+.result dt { color: var(--dim); text-transform: uppercase; font-size: 11px; letter-spacing: .1em; padding-top: 3px; }
+.result dd { margin: 0; }
+.err { color: var(--bad); }
+.ok { color: var(--accent); }
+
+footer { padding: 36px 0 60px; font: 400 13px/1.7 var(--mono); color: var(--dim); }
+footer .wrap { display: flex; gap: 28px; justify-content: space-between; flex-wrap: wrap; }
+footer a { color: var(--text); }
+.fine { max-width: 520px; }
+
+/* admin */
+.admin-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 40px 0 80px; }
+.tabs { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--text); position: sticky; top: 80px; align-self: start; }
+.tabs button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--dim); font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; padding: 14px 0; cursor: pointer; }
+.tabs button[aria-selected=true] { color: var(--text); box-shadow: inset 3px 0 0 var(--accent); padding-left: 12px; }
+.tbl { width: 100%; border-collapse: collapse; font: 400 12.5px/1.5 var(--mono); }
+.tbl th { text-align: left; color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding: 0 10px 10px 0; border-bottom: 1px solid var(--text); }
+.tbl td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-all; }
+.tbl td.act { white-space: nowrap; }
+.tbl .btn { margin-right: 6px; }
+.keybox { background: var(--bg); border: 1px dashed var(--accent); padding: 14px; font: 500 13px/1.8 var(--mono); color: var(--accent); white-space: pre-wrap; user-select: all; margin-top: 14px; }
+.hidden { display: none !important; }
+.stack > * + * { margin-top: 18px; }
+.stat-row { display: flex; gap: 40px; flex-wrap: wrap; }
+.stat b { display: block; font: 400 52px/1 var(--display); }
+.stat span { font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); }
+
+@media (max-width: 820px) {
+  .nav { display: none; }
+  .top .wrap { gap: 12px; }
+  .sec-head { grid-template-columns: 1fr; gap: 10px; }
+  .sec-head p { grid-column: 1; }
+  .index-row, .news-item { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .index-row p span { white-space: normal; }
+  .steps { grid-template-columns: 1fr; }
+  .steps li, .steps li + li { border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .ranks td:first-child { width: 150px; }
+  .admin-grid { grid-template-columns: 1fr; }
+  .tabs { flex-direction: row; overflow-x: auto; position: static; border-top: 0; border-bottom: 1px solid var(--text); }
+  .tabs button { border-bottom: 0; padding: 12px 14px; white-space: nowrap; }
+  .tabs button[aria-selected=true] { box-shadow: inset 0 -3px 0 var(--accent); padding-left: 14px; }
+  .result dl { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+
+html { scroll-padding-top: 70px; }
+.hero h1 + .slab { margin-top: 26px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn svg { width: 14px; height: 14px; flex: none; }
+.btn.small svg { width: 13px; height: 13px; }
+.news-item time { display: flex; align-items: flex-start; gap: 8px; }
+.news-item time svg { width: 14px; height: 14px; flex: none; margin-top: 1px; color: var(--accent); }
+
+/* games */
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px; }
+.gcard { border: 1px solid var(--line); background: var(--panel); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.gshot { position: relative; aspect-ratio: 16 / 9; background: #15151a center / cover no-repeat; }
+.gshot::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,11,.2) 0%, rgba(10,10,11,.1) 38%, rgba(10,10,11,.9) 100%); }
+.gchips { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; gap: 8px; z-index: 1; }
+.chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 10px; background: rgba(10,10,11,.72); border: 1px solid rgba(255,255,255,.14);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font: 600 12px/1 var(--mono); white-space: nowrap; }
+.chip svg { width: 14px; height: 14px; flex: none; }
+.chip .sep { width: 1px; height: 12px; background: rgba(255,255,255,.28); }
+.chip .hot { color: var(--accent); }
+.gbrand { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; gap: 12px; align-items: flex-end; z-index: 1; }
+.glogo { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(255,255,255,.35); background: var(--bg); flex: none; display: flex; align-items: center; justify-content: center; font: 400 22px/1 var(--display); color: var(--dim); }
+.gbrand h3 { font: 400 clamp(24px, 4.2vw, 34px)/1 var(--display); text-transform: uppercase; margin: 0; letter-spacing: .01em; }
+.gbrand p { margin: 5px 0 0; font-size: 13px; line-height: 1.35; color: #d6d2c8; }
+.grow { display: flex; align-items: center; gap: 12px; padding: 14px 16px 16px; flex-wrap: wrap; }
+.gav { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); object-fit: cover; background: var(--bg); flex: none; }
+.ginfo { flex: 1 1 170px; min-width: 0; }
+.ginfo b { display: block; font: 600 15px/1.3 var(--sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ginfo span { font: 500 12px/1.6 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .06em; display: inline-flex; align-items: center; gap: 6px; }
+.ggo { display: flex; gap: 8px; }
+.ggo .btn { border-radius: 10px; }
+
+/* comments */
+.cform { display: grid; gap: 14px; }
+.cform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cform small { font: 400 12px/1.5 var(--mono); color: var(--dim); }
+.cmsg { min-height: 20px; font: 400 13px/1.5 var(--mono); }
+.clist { list-style: none; margin: 34px 0 0; padding: 0; border-top: 1px solid var(--text); max-width: 760px; }
+.citem { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.chead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.cname { font-weight: 600; }
+.crole { font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 7px 3px; border: 1px solid var(--c, var(--dim)); color: var(--c, var(--dim)); }
+.ctick { width: 15px; height: 15px; color: var(--accent); flex: none; }
+.cpin { font: 500 10.5px/1 var(--mono); color: var(--dim); letter-spacing: .1em; text-transform: uppercase; }
+.ctime { font: 400 12px/1 var(--mono); color: var(--dim); margin-left: auto; }
+.ctext { margin: 0; white-space: pre-wrap; word-wrap: break-word; color: #d6d2c8; }
+
+@media (max-width: 820px) {
+  .ggo { width: 100%; }
+  .ggo .btn { flex: 1; text-align: center; }
+  .cform .two { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="mark" href="#">NOX</a>
+  <nav class="nav">
+    <a href="#games">Games</a>
+    <a href="#ranks">Ranks</a>
+    <a href="#key">Key</a>
+    <a href="#announcements">Announcements</a>
+    <a href="#comments">Comments</a>
+  </nav>
+  <a class="btn small solid" data-discord href="#"><span data-icon="chat"></span>Discord</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <p class="eyebrow">Roblox script hub</p>
+  <h1>NOX</h1>
+  <div class="slab">
+    <div class="slab-head"><span>Loader</span><span>Paste into your executor</span></div>
+    <code id="loader"></code>
+    <div class="slab-foot">
+      <button class="btn solid small" id="copy" type="button"><span data-icon="copy"></span>Copy loader</button>
+      <a class="btn small" href="#key"><span data-icon="key"></span>Get a key</a>
+      <span class="live" id="live" style="display:none"><i></i><span></span></span>
+    </div>
+  </div>
+</div></section>
+
+<section class="block" id="games"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">01 / Games</span><h2>Supported games</h2>
+    <p>Press Play to open the game, then run the loader.</p></div>
+  <div class="games" id="games-list"></div>
+</div></section>
+
+<section class="block" id="ranks"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">02 / Ranks</span><h2>Ranks</h2>
+    <p>Your rank shows in the corner of the window and next to your comments. Redeem a key in the Donate tab to change it.</p></div>
+  <table class="ranks">
+    <thead><tr><th>Rank</th><th>How you get it</th></tr></thead>
+    <tbody>
+      <tr><td><span class="rank" style="--c:#8b877e">FREE</span></td><td>Default. Every core feature, no key needed.</td></tr>
+      <tr><td><span class="rank" style="--c:#6edc8c">VIP</span></td><td>Key from the Discord server.</td></tr>
+      <tr><td><span class="rank" style="--c:#ffcd50">DONATOR</span></td><td>Key from the Discord server.</td></tr>
+      <tr><td><span class="rank" style="--c:#5ac8eb">PARTNER</span></td><td>Given to partner communities.</td></tr>
+      <tr><td><span class="rank" style="--c:#af7dff">CONTENT CREATOR</span></td><td>Given to creators who cover NOX.</td></tr>
+      <tr><td><span class="rank" style="--c:#ff5f5f">ADMIN</span></td><td>Staff rank.</td></tr>
+      <tr><td><span class="rank" style="--c:#ff7dbe">NOX WIFE</span></td><td>A rank we keep for one person.</td></tr>
+      <tr><td><span class="rank" style="--c:#ffa537">OWNER</span></td><td>Tied to the owner's Roblox account. No key.</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<section class="block" id="key"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">03 / Key</span><h2>Keys</h2>
+    <p>The script works without a key. A key sets your rank and unlocks anything marked for donators.</p></div>
+  <ol class="steps">
+    <li><b>Join the Discord</b><p>Keys are handed out there by staff.</p></li>
+    <li><b>Run the loader</b><p>Copy it from the top of this page and execute it inside the game.</p></li>
+    <li><b>Redeem in game</b><p>Open the Donate tab in the NOX window, paste your key and press Redeem.</p></li>
+  </ol>
+  <p style="margin-top:28px"><a class="btn solid" data-discord href="#"><span data-icon="chat"></span>Join the Discord</a></p>
+</div></section>
+
+<section class="block" id="announcements"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">04 / Announcements</span><h2>Announcements</h2></div>
+  <ul class="news-list" id="news-list"></ul>
+</div></section>
+
+<section class="block" id="comments"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">05 / Comments</span><h2>Comments</h2>
+    <p id="comments-lede">Questions, bug reports, requests.</p></div>
+  <div id="comments-box"></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="fine">NOX is not affiliated with Roblox Corporation. Scripts can get an account banned, so use them on an account you can afford to lose.</div>
+  <div><a data-discord href="#">Discord</a> &nbsp;/&nbsp; <a data-rscripts href="#">rscripts.net</a></div>
+</div></footer>
+
+<script>
+/* ===== EDIT HERE =====================================================
+   Everything you normally change is in this block.                    */
+var NOX = {
+  // Address of your NOX server (Cloudflare Worker). Leave "" to run without a server:
+  // comments then use GitHub (utterances) and game info comes from a public Roblox proxy.
+  API: "",
+  DISCORD: "https://discord.gg/SZn3qyNNfC",
+  RSCRIPTS: "https://rscripts.net/@_NOX",
+  LOADER: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/LuaUScrip/SENA/refs/heads/main/StealAnEgg_NOX_FULL.lua"))()',
+  COMMENTS_REPO: "LuaUScrip/SENA",   // only used when API is ""
+};
+
+// Add a game with either its page link ("url") or its universe id ("universe").
+// Icon, banner, name, player count and the Play link are read from Roblox.
+// Optional: add note: "short text" to show a line under the game name.
+// All icons used by the page. Each one is SVG code: replace it with your own SVG to change the icon.
+// (Colours come from the page, so keep currentColor in simple icons.)
+var ICONS = {
+  "logo": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 256 256\"><rect x=\"1.5\" y=\"1.5\" width=\"253\" height=\"253\" rx=\"51.2\" fill=\"#0a0a0b\" stroke=\"#2a2a2e\" stroke-width=\"3\"/><path fill=\"#e8e4da\" d=\"M32.26 79.36h18.28v87.04h-18.28z M73.16 79.36h18.28v87.04h-18.28z M32.26 79.36h22.85L91.44 166.4h-22.85z\"/><rect x=\"98.41\" y=\"79.36\" width=\"59.19\" height=\"87.04\" rx=\"20.12\" fill=\"#e8e4da\"/><rect x=\"116.68\" y=\"97.64\" width=\"22.63\" height=\"50.48\" rx=\"8.29\" fill=\"#0a0a0b\"/><path fill=\"#e8e4da\" d=\"M164.56 79.36h19.19L223.74 166.4h-19.19z M204.55 79.36h19.19L183.75 166.4h-19.19z\"/><rect x=\"32.26\" y=\"177.92\" width=\"65.11\" height=\"5.63\" fill=\"#cfff2e\"/><\/svg>",
+  "verified": "<svg class=\"ctick\" viewBox=\"0 0 24 24\" aria-label=\"Verified\"><title>Verified<\/title><path fill=\"currentColor\" d=\"M12 1.8l2.6 2 3.3-.2 1 3.1 2.7 1.9-1 3.1 1 3.1-2.7 1.9-1 3.1-3.3-.2-2.6 2-2.6-2-3.3.2-1-3.1-2.7-1.9 1-3.1-1-3.1 2.7-1.9 1-3.1 3.3.2z\"/><path fill=\"none\" stroke=\"#11140a\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8 12.3l2.8 2.8L16.3 9.4\"/><\/svg>",
+  "eye": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><\/svg>",
+  "bolt": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M13 2L4 14h6l-1 8 9-12h-6z\"/><\/svg>",
+  "play": "<svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M7 4.5v15l13-7.5z\"/><\/svg>",
+  "key": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"M11 12l9-9M16 7l3 3M14 9l2 2\"/><\/svg>",
+  "copy": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"12\" height=\"12\" rx=\"2\"/><path d=\"M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1\"/><\/svg>",
+  "chat": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.2A8 8 0 1 1 21 12z\"/><\/svg>",
+  "megaphone": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z\"/><path d=\"M15 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12\"/><\/svg>"
+};
+
+var GAMES = [
+  { universe: "10563114921" },
+  // { url: "https://www.roblox.com/games/1234567890/Game-Name" },
+];
+/* ================================================================== */
+
+(function () {
+  var API = (NOX.API || "").replace(/\/+$/, "");
+  function iconSrc(v) {
+    v = String(v || "");
+    return /^\s*<svg/i.test(v) ? "data:image/svg+xml;charset=utf-8," + encodeURIComponent(v.trim()) : v;
+  }
+  document.querySelectorAll("[data-icon]").forEach(function (n) { n.outerHTML = ICONS[n.getAttribute("data-icon")] || ""; });
+  function $(s) { return document.querySelector(s); }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function getJSON(url) {
+    return fetch(url, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("http " + r.status);
+      return r.json();
+    });
+  }
+  function store(key, val) {
+    try { if (val === undefined) return localStorage.getItem(key) || ""; localStorage.setItem(key, val); } catch (e) { return ""; }
+  }
+
+  document.querySelectorAll("[data-discord]").forEach(function (a) { a.href = NOX.DISCORD; });
+  document.querySelectorAll("[data-rscripts]").forEach(function (a) { a.href = NOX.RSCRIPTS; });
+  $("#loader").textContent = NOX.LOADER;
+
+  $("#copy").addEventListener("click", function () {
+    var btn = this, done = function () {
+      var old = btn.innerHTML; btn.textContent = "Copied";
+      setTimeout(function () { btn.innerHTML = old; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(NOX.LOADER).then(done, function () {});
+    } else {
+      var ta = el("textarea"); ta.value = NOX.LOADER; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+
+  /* ---------------------------------------------------------- online */
+  var liveBox = $("#live");
+  if (API && liveBox) {
+    var pull = function () {
+      getJSON(API + "/public/stats").then(function (d) {
+        if (!d || !d.ok) return;
+        liveBox.style.display = "";
+        liveBox.classList.add("on");
+        liveBox.lastChild.textContent = d.online + (d.online === 1 ? " player online" : " players online");
+      }).catch(function () {});
+    };
+    pull(); setInterval(pull, 30000);
+  }
+
+  /* ------------------------------------------------------------ games */
+  function compact(n) {
+    try { return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n); }
+    catch (e) { return String(n); }
+  }
+  function gameInfo(cfg) {
+    var placeFromUrl = cfg.url && (cfg.url.match(/games\/(\d+)/) || [])[1];
+    if (API) {
+      var q = cfg.universe ? "universe=" + cfg.universe : "place=" + placeFromUrl;
+      return getJSON(API + "/public/game?" + q).then(function (d) {
+        if (!d || !d.ok) throw new Error("no game");
+        return d;
+      });
+    }
+    // no server: public Roblox proxy that allows browser requests
+    var uni = cfg.universe ? Promise.resolve(cfg.universe)
+      : getJSON("https://apis.roproxy.com/universes/v1/places/" + placeFromUrl + "/universe").then(function (d) { return String(d.universeId); });
+    return uni.then(function (u) {
+      return Promise.all([
+        getJSON("https://games.roproxy.com/v1/games?universeIds=" + u),
+        getJSON("https://thumbnails.roproxy.com/v1/games/icons?universeIds=" + u + "&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false").catch(function () { return {}; }),
+        getJSON("https://thumbnails.roproxy.com/v1/games/multiget/thumbnails?universeIds=" + u + "&countPerUniverse=1&defaults=true&size=768x432&format=Png&isCircular=false").catch(function () { return {}; }),
+      ]).then(function (r) {
+        var g = r[0].data && r[0].data[0];
+        if (!g) throw new Error("no game");
+        var shot = r[2].data && r[2].data[0] && r[2].data[0].thumbnails && r[2].data[0].thumbnails[0];
+        return { name: g.name, playing: g.playing, visits: g.visits, placeId: g.rootPlaceId, updated: g.updated,
+          icon: r[1].data && r[1].data[0] ? r[1].data[0].imageUrl : "", banner: shot ? shot.imageUrl : "" };
+      });
+    });
+  }
+  var EYE = ICONS.eye || "", BOLT = ICONS.bolt || "", TICK_SMALL = ICONS.verified || "";
+  function agoShort(iso) {
+    var t = Date.parse(iso); if (!t) return "";
+    var s = Math.max(1, Math.floor((Date.now() - t) / 1000));
+    if (s < 3600) return Math.max(1, Math.floor(s / 60)) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    if (s < 2592000) return Math.floor(s / 86400) + "d ago";
+    if (s < 31536000) return Math.floor(s / 2592000) + "mo ago";
+    return Math.floor(s / 31536000) + "y ago";
+  }
+  function iconSpan(svg) { var n = el("span"); n.innerHTML = svg; return n.firstChild || document.createTextNode(""); }
+
+  function renderGame(cfg, card) {
+    card.textContent = "";
+    var shot = el("div", "gshot");
+    var chips = el("div", "gchips");
+    var stats = el("span", "chip");
+    var visits = el("span", null, "-"), playing = el("span", "hot", "-");
+    stats.appendChild(iconSpan(EYE)); stats.appendChild(visits);
+    stats.appendChild(el("i", "sep")); stats.appendChild(iconSpan(BOLT)); stats.appendChild(playing);
+    var when = el("span", "chip", "");
+    when.style.visibility = "hidden";
+    chips.appendChild(stats); chips.appendChild(when);
+
+    var brand = el("div", "gbrand");
+    var logo = el("div", "glogo", "...");
+    var bt = el("div");
+    var name = el("h3", null, cfg.name || "Loading");
+    bt.appendChild(name);
+    if (cfg.note) bt.appendChild(el("p", null, cfg.note));
+    brand.appendChild(logo); brand.appendChild(bt);
+    shot.appendChild(chips); shot.appendChild(brand);
+
+    var row = el("div", "grow");
+    var av = el("img", "gav"); av.src = iconSrc(ICONS.logo) || "logo.png"; av.alt = "NOX"; av.width = 44; av.height = 44;
+    av.onerror = function () { av.style.display = "none"; };
+    var info = el("div", "ginfo");
+    var title = el("b", null, "NOX | " + (cfg.name || "Game"));
+    var sub = el("span");
+    sub.appendChild(document.createTextNode("NOX"));
+    if (TICK_SMALL) { var tk = el("span"); tk.innerHTML = TICK_SMALL; sub.appendChild(tk.firstChild); }
+    var gname = el("span", null, "\u00b7 " + (cfg.name || ""));
+    sub.appendChild(gname);
+    info.appendChild(title); info.appendChild(sub);
+    var go = el("div", "ggo");
+    var play = el("a", "btn solid small");
+    play.appendChild(iconSpan(ICONS.play || "")); play.appendChild(document.createTextNode("Play"));
+    play.target = "_blank"; play.rel = "noopener";
+    if (cfg.url) play.href = cfg.url; else { play.setAttribute("aria-disabled", "true"); play.style.opacity = ".5"; }
+    var script = el("a", "btn small", "Get script"); script.href = "#";
+    go.appendChild(play); go.appendChild(script);
+    row.appendChild(av); row.appendChild(info); row.appendChild(go);
+    card.appendChild(shot); card.appendChild(row);
+
+    gameInfo(cfg).then(function (d) {
+      name.textContent = d.name;
+      title.textContent = "NOX | " + d.name;
+      gname.textContent = "\u00b7 " + d.name;
+      if (d.icon) { var img = el("img", "glogo"); img.src = d.icon; img.alt = d.name + " logo"; img.width = 56; img.height = 56; brand.replaceChild(img, logo); }
+      else logo.textContent = d.name.slice(0, 2).toUpperCase();
+      if (d.banner) shot.style.backgroundImage = "url(" + JSON.stringify(d.banner).slice(1, -1) + ")";
+      visits.textContent = compact(d.visits || 0);
+      playing.textContent = compact(d.playing || 0);
+      var a = d.updated ? agoShort(d.updated) : "";
+      if (a) { when.textContent = "Updated " + a; when.style.visibility = ""; }
+      if (d.placeId) play.href = "https://www.roblox.com/games/" + d.placeId;
+      play.removeAttribute("aria-disabled"); play.style.opacity = "";
+    }).catch(function () {
+      logo.textContent = (cfg.name || "?").slice(0, 2).toUpperCase();
+      visits.textContent = "n/a"; playing.textContent = "n/a";
+    });
+  }
+  var gl = $("#games-list");
+  GAMES.forEach(function (cfg) {
+    var card = el("article", "gcard");
+    gl.appendChild(card);
+    renderGame(cfg, card);
+  });
+  // "Get the script" buttons jump back to the loader
+  gl.addEventListener("click", function (e) {
+    if (e.target.tagName === "A" && e.target.textContent === "Get script") { e.preventDefault(); $("#loader").scrollIntoView({ behavior: "smooth", block: "center" }); }
+  });
+
+  /* ------------------------------------------------------------- news */
+  var list = $("#news-list");
+  function newsRow(date, title, text, by, role) {
+    var li = el("li", "news-item");
+    var tm = el("time");
+    if (ICONS.megaphone) tm.appendChild(iconSpan(ICONS.megaphone));
+    tm.appendChild(document.createTextNode(date));
+    li.appendChild(tm);
+    var body = el("div");
+    if (title) body.appendChild(el("h3", null, title));
+    body.appendChild(el("p", title ? null : "muted", text));
+    if (by) body.appendChild(el("div", "by", "by " + by + (role ? " / " + role : "")));
+    li.appendChild(body);
+    list.appendChild(li);
+  }
+  var newsSource = API ? getJSON(API + "/public/announcements").then(function (d) {
+    return (d.items || []).map(function (a) {
+      return { id: a.id, date: new Date(a.ts * 1000).toISOString().slice(0, 10), title: a.title, text: a.text, by: a.author, role: a.role };
+    });
+  }) : getJSON("announcements.json");
+  newsSource.then(function (items) {
+    items = (items || []).filter(function (n) { return n && n.show !== false; })
+      .sort(function (a, b) { return (b.id || 0) - (a.id || 0); }).slice(0, 10);
+    if (!items.length) { newsRow("-", "", "No announcements yet."); return; }
+    items.forEach(function (n) { newsRow(n.date || "-", n.title || "", n.text || "", n.by, n.role); });
+  }).catch(function () { newsRow("-", "", "Could not load announcements."); });
+
+  /* --------------------------------------------------------- comments */
+  var box = $("#comments-box");
+  var COLORS = { VIP: "#6edc8c", DONATOR: "#ffcd50", PARTNER: "#5ac8eb", "CONTENT CREATOR": "#af7dff",
+    ADMIN: "#ff5f5f", "NOX WIFE": "#ff7dbe", OWNER: "#ffa537", STAFF: "#ff5f5f", TRIAL: "#5ac8eb" };
+  var ERRORS = {
+    bad_name: "Name needs 2 to 24 letters, numbers, spaces, _ . or -",
+    bad_text: "Write between 2 and 500 characters.",
+    reserved_name: "Names with owner, admin, staff, mod or nox need a valid NOX key.",
+    invalid_key: "That key is not valid, expired or revoked.",
+    key_share: "Do not paste license keys into a comment.",
+    badword: "That message was blocked.",
+    slow_down: "Wait a few seconds before posting again.",
+  };
+  function ago(ts) {
+    var s = Math.max(1, Math.floor(Date.now() / 1000 - ts));
+    if (s < 60) return "just now";
+    if (s < 3600) return Math.floor(s / 60) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    if (s < 2592000) return Math.floor(s / 86400) + "d ago";
+    return new Date(ts * 1000).toISOString().slice(0, 10);
+  }
+  var TICK = ICONS.verified || "";
+
+  function commentItem(c) {
+    var li = el("li", "citem");
+    var head = el("div", "chead");
+    head.appendChild(el("span", "cname", c.name));
+    if (c.role && c.role !== "GUEST") {
+      var chip = el("span", "crole", c.role);
+      chip.style.setProperty("--c", COLORS[c.role] || "#8b877e");
+      head.appendChild(chip);
+    }
+    if (c.verified && TICK) { var t = el("span"); t.innerHTML = TICK; head.appendChild(t.firstChild); }
+    if (c.pinned) head.appendChild(el("span", "cpin", "Pinned"));
+    head.appendChild(el("span", "ctime", ago(c.ts)));
+    li.appendChild(head);
+    li.appendChild(el("p", "ctext", c.text));
+    return li;
+  }
+
+  function startServerComments() {
+    $("#comments-lede").textContent = "Questions, bug reports, requests. Add your NOX key to show your rank and a verified tick.";
+    var panel = el("div", "panel"); panel.style.maxWidth = "760px";
+    var form = el("div", "cform");
+    var two = el("div", "two");
+    var nameWrap = el("div"), keyWrap = el("div");
+    nameWrap.innerHTML = '<label class="f" for="c-name">Name</label>';
+    keyWrap.innerHTML = '<label class="f" for="c-key">NOX key (optional)</label>';
+    var nameIn = el("input"); nameIn.type = "text"; nameIn.id = "c-name"; nameIn.maxLength = 24; nameIn.autocomplete = "nickname";
+    var keyIn = el("input"); keyIn.type = "password"; keyIn.id = "c-key"; keyIn.autocomplete = "off"; keyIn.placeholder = "NOX-XXXXXXXX-...";
+    nameIn.value = store("nox_name");
+    nameWrap.appendChild(nameIn); keyWrap.appendChild(keyIn);
+    two.appendChild(nameWrap); two.appendChild(keyWrap);
+    var textWrap = el("div");
+    textWrap.innerHTML = '<label class="f" for="c-text">Comment</label>';
+    var textIn = el("textarea"); textIn.id = "c-text"; textIn.maxLength = 500;
+    textWrap.appendChild(textIn);
+    var row = el("div", "row");
+    var post = el("button", "btn solid", "Post comment"); post.type = "button";
+    var msg = el("div", "cmsg");
+    row.appendChild(post); row.appendChild(msg);
+    form.appendChild(two); form.appendChild(textWrap); form.appendChild(row);
+    form.appendChild(el("small", null, "Your key is only used to check your rank. It is never shown or stored with the comment."));
+    panel.appendChild(form);
+    var ul = el("ul", "clist");
+    box.appendChild(panel); box.appendChild(ul);
+
+    function load() {
+      getJSON(API + "/public/comments?limit=60").then(function (d) {
+        ul.textContent = "";
+        var items = (d && d.items) || [];
+        if (!items.length) { var e = el("li", "citem"); e.appendChild(el("p", "ctext muted", "No comments yet. Be the first.")); ul.appendChild(e); return; }
+        items.forEach(function (c) { ul.appendChild(commentItem(c)); });
+      }).catch(function () {
+        ul.textContent = "";
+        var e = el("li", "citem"); e.appendChild(el("p", "ctext muted", "Could not load comments.")); ul.appendChild(e);
+      });
+    }
+    post.addEventListener("click", function () {
+      msg.className = "cmsg"; msg.textContent = "";
+      post.disabled = true;
+      fetch(API + "/public/comment", { method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: nameIn.value, text: textIn.value, key: keyIn.value }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.ok) { store("nox_name", nameIn.value); textIn.value = ""; msg.className = "cmsg ok"; msg.textContent = d.verified ? "Posted as " + d.role + "." : "Posted."; load(); }
+          else { msg.className = "cmsg err"; msg.textContent = ERRORS[d && d.error] || "Could not post that comment."; }
+        })
+        .catch(function () { msg.className = "cmsg err"; msg.textContent = "Server unreachable. Try again."; })
+        .then(function () { post.disabled = false; });
+    });
+    load();
+    setInterval(load, 60000);
+  }
+
+  function startGithubComments() {
+    $("#comments-lede").textContent = "Questions, bug reports, requests. You need a free GitHub account to write here.";
+    var panel = el("div", "panel"); panel.style.maxWidth = "760px";
+    panel.appendChild(el("p", "muted", "Loading comments..."));
+    box.appendChild(panel);
+    var cs = document.createElement("script");
+    cs.src = "https://utteranc.es/client.js";
+    cs.async = true; cs.crossOrigin = "anonymous";
+    cs.setAttribute("repo", NOX.COMMENTS_REPO);
+    cs.setAttribute("issue-term", "NOX comments");
+    cs.setAttribute("label", "comment");
+    cs.setAttribute("theme", "github-dark");
+    cs.onload = function () { var p = panel.querySelector("p.muted"); if (p) p.remove(); };
+    cs.onerror = function () { panel.textContent = "Comments could not load. Check your connection and reload."; };
+    panel.appendChild(cs);
+  }
+
+  if (API) startServerComments(); else startGithubComments();
+})();
+</script>
+</body>
+</html>

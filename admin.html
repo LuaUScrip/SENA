@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin - NOX</title>
+<meta name="theme-color" content="#0a0a0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --panel: #111113;
+  --line: #2a2a2e;
+  --text: #e8e4da;
+  --dim: #8b877e;
+  --accent: #cfff2e;
+  --accent-ink: #11140a;
+  --bad: #ff5f5f;
+  --display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --wrap: 1120px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+/* top bar */
+.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; background: rgba(10,10,11,.92); backdrop-filter: blur(6px); }
+.top .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
+.mark { font: 400 26px/1 var(--display); letter-spacing: .04em; text-decoration: none; margin-right: auto; }
+.nav { display: flex; gap: 22px; font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.nav a { text-decoration: none; color: var(--dim); padding: 6px 0; border-bottom: 1px solid transparent; }
+.nav a:hover, .nav a[aria-current] { color: var(--text); border-bottom-color: var(--accent); }
+.btn {
+  display: inline-block; font: 600 13px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
+  padding: 12px 18px; border: 1px solid var(--text); text-decoration: none; background: transparent; color: var(--text); cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn:hover { background: var(--text); color: var(--bg); }
+.btn.solid { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.solid:hover { background: var(--text); border-color: var(--text); }
+.btn.small { padding: 9px 12px; font-size: 11px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* hero */
+.hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--dim); margin: 0 0 18px; }
+.hero h1 { font: 400 clamp(110px, 24vw, 280px)/.82 var(--display); letter-spacing: .01em; margin: 0 0 6px -6px; text-transform: uppercase; }
+.hero .lede { max-width: 560px; font-size: 19px; line-height: 1.5; margin: 22px 0 36px; }
+.slab { border: 1px solid var(--line); background: var(--panel); max-width: 760px; }
+.slab-head { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+.slab code { display: block; padding: 18px 14px; font: 400 13.5px/1.55 var(--mono); overflow-x: auto; white-space: pre; color: var(--accent); }
+.slab-foot { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.live { font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); display: inline-block; }
+.live.on i { background: var(--accent); box-shadow: 0 0 0 4px rgba(207,255,46,.15); }
+.live.on { color: var(--text); }
+
+/* sections */
+section.block { padding: 72px 0; border-bottom: 1px solid var(--line); }
+.sec-head { display: grid; grid-template-columns: 140px 1fr; gap: 24px; margin-bottom: 40px; align-items: baseline; }
+.sec-no { font: 500 12px/1 var(--mono); letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.sec-head h2 { font: 400 clamp(36px, 6vw, 64px)/.95 var(--display); text-transform: uppercase; margin: 0; letter-spacing: .01em; }
+.sec-head p { grid-column: 2; margin: 0; max-width: 560px; color: var(--dim); }
+
+/* feature index */
+.index { border-top: 1px solid var(--text); }
+.index-row { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.index-row h3 { font: 600 13px/1.4 var(--mono); text-transform: uppercase; letter-spacing: .1em; margin: 0; padding-top: 3px; }
+.index-row p { margin: 0; color: #c9c5bb; line-height: 1.75; }
+.index-row p span { white-space: nowrap; }
+.index-row p span:not(:last-child)::after { content: "/"; color: var(--dim); margin: 0 .35em 0 .55em; }
+
+/* ranks */
+.ranks { width: 100%; border-collapse: collapse; }
+.ranks th { text-align: left; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); padding: 0 0 12px; border-bottom: 1px solid var(--text); }
+.ranks td { padding: 15px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.ranks td:first-child { width: 230px; }
+.rank { font: 600 13px/1 var(--mono); letter-spacing: .08em; display: inline-flex; align-items: center; gap: 10px; }
+.rank::before { content: ""; width: 10px; height: 10px; background: var(--c, var(--dim)); }
+.ranks td:last-child { color: #c9c5bb; }
+
+/* steps */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--text); }
+.steps li { counter-increment: s; padding: 22px 24px 8px 0; border-right: 1px solid var(--line); }
+.steps li + li { padding-left: 24px; }
+.steps li:last-child { border-right: 0; }
+.steps li::before { content: "0" counter(s); font: 400 44px/1 var(--display); color: var(--accent); display: block; margin-bottom: 14px; }
+.steps b { display: block; margin-bottom: 6px; }
+.steps p { margin: 0; color: #c9c5bb; font-size: 15px; }
+
+/* news */
+.news-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--text); }
+.news-item { display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.news-item time { font: 500 12px/1.6 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .08em; }
+.news-item h3 { margin: 0 0 4px; font: 600 17px/1.35 var(--sans); }
+.news-item p { margin: 0; color: #c9c5bb; white-space: pre-wrap; }
+.news-item .by { font: 500 11px/1 var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
+.muted { color: var(--dim); }
+
+/* forms */
+.panel { border: 1px solid var(--line); background: var(--panel); padding: 24px; }
+label.f { display: block; font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); margin-bottom: 8px; }
+input[type=text], input[type=password], input[type=number], textarea, select {
+  width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line); padding: 12px 14px;
+  font: 400 14px/1.4 var(--mono); border-radius: 0; outline: none;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { min-height: 96px; resize: vertical; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.row > * { flex: 1 1 160px; }
+.row > .btn { flex: 0 0 auto; }
+.result { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; font: 400 14px/1.7 var(--mono); }
+.result dl { display: grid; grid-template-columns: 150px 1fr; gap: 4px 16px; margin: 0; }
+.result dt { color: var(--dim); text-transform: uppercase; font-size: 11px; letter-spacing: .1em; padding-top: 3px; }
+.result dd { margin: 0; }
+.err { color: var(--bad); }
+.ok { color: var(--accent); }
+
+footer { padding: 36px 0 60px; font: 400 13px/1.7 var(--mono); color: var(--dim); }
+footer .wrap { display: flex; gap: 28px; justify-content: space-between; flex-wrap: wrap; }
+footer a { color: var(--text); }
+.fine { max-width: 520px; }
+
+/* admin */
+.admin-grid { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 40px 0 80px; }
+.tabs { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--text); position: sticky; top: 80px; align-self: start; }
+.tabs button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--dim); font: 500 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; padding: 14px 0; cursor: pointer; }
+.tabs button[aria-selected=true] { color: var(--text); box-shadow: inset 3px 0 0 var(--accent); padding-left: 12px; }
+.tbl { width: 100%; border-collapse: collapse; font: 400 12.5px/1.5 var(--mono); }
+.tbl th { text-align: left; color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding: 0 10px 10px 0; border-bottom: 1px solid var(--text); }
+.tbl td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; word-break: break-all; }
+.tbl td.act { white-space: nowrap; }
+.tbl .btn { margin-right: 6px; }
+.keybox { background: var(--bg); border: 1px dashed var(--accent); padding: 14px; font: 500 13px/1.8 var(--mono); color: var(--accent); white-space: pre-wrap; user-select: all; margin-top: 14px; }
+.hidden { display: none !important; }
+.stack > * + * { margin-top: 18px; }
+.stat-row { display: flex; gap: 40px; flex-wrap: wrap; }
+.stat b { display: block; font: 400 52px/1 var(--display); }
+.stat span { font: 500 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--dim); }
+
+@media (max-width: 820px) {
+  .nav { display: none; }
+  .top .wrap { gap: 12px; }
+  .sec-head { grid-template-columns: 1fr; gap: 10px; }
+  .sec-head p { grid-column: 1; }
+  .index-row, .news-item { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .index-row p span { white-space: normal; }
+  .steps { grid-template-columns: 1fr; }
+  .steps li, .steps li + li { border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .ranks td:first-child { width: 150px; }
+  .admin-grid { grid-template-columns: 1fr; }
+  .tabs { flex-direction: row; overflow-x: auto; position: static; border-top: 0; border-bottom: 1px solid var(--text); }
+  .tabs button { border-bottom: 0; padding: 12px 14px; white-space: nowrap; }
+  .tabs button[aria-selected=true] { box-shadow: inset 0 -3px 0 var(--accent); padding-left: 14px; }
+  .result dl { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+
+.filter { max-width: 320px; margin-bottom: 14px; }
+.pill { display: inline-block; font: 600 10.5px/1 var(--mono); letter-spacing: .08em; padding: 4px 7px 3px; border: 1px solid var(--c, var(--dim)); color: var(--c, var(--dim)); text-transform: uppercase; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; box-shadow: 0 0 0 3px rgba(207,255,46,.15); }
+.tbl a { color: var(--accent); }
+.bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.bar > div { flex: 1 1 140px; }
+.bar > .btn, .bar > label { flex: 0 0 auto; }
+.tabs { min-width: 0; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="mark" href="index.html">NOX</a><span class="nav" style="margin-left:auto"><a href="index.html">Back to site</a></span></div></header>
+
+<main class="wrap">
+<div id="login" style="padding:80px 0;max-width:480px">
+  <p class="eyebrow">Admin</p>
+  <h2 style="font:400 56px/1 var(--display);text-transform:uppercase;margin:0 0 24px">Sign in</h2>
+  <div class="panel stack">
+    <div><label class="f" for="apiurl">Server address</label><input type="text" id="apiurl" placeholder="https://nox-api.yourname.workers.dev" autocomplete="off" spellcheck="false"></div>
+    <div><label class="f" for="tok">Admin token</label><input type="password" id="tok" autocomplete="off"></div>
+    <button class="btn solid" id="signin" type="button">Sign in</button>
+    <div id="login-err" class="err"></div>
+  </div>
+</div>
+
+<div id="app" class="admin-grid hidden">
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+    <button role="tab" data-tab="players" aria-selected="false">Live players</button>
+    <button role="tab" data-tab="roles" aria-selected="false">Roles</button>
+    <button role="tab" data-tab="licenses" aria-selected="false">Licenses</button>
+    <button role="tab" data-tab="announce" aria-selected="false">Announce</button>
+    <button role="tab" data-tab="comments" aria-selected="false">Comments</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Game chat</button>
+    <button role="tab" data-tab="bans" aria-selected="false">Bans</button>
+    <button role="tab" data-tab="activity" aria-selected="false">Activity</button>
+    <button role="tab" id="signout" aria-selected="false">Sign out</button>
+  </div>
+
+  <div style="min-width:0">
+    <section data-panel="overview" class="stack">
+      <div class="stat-row">
+        <div class="stat"><b id="s-online">-</b><span>Online now</span></div>
+        <div class="stat"><b id="s-licenses">-</b><span>Licenses</span></div>
+        <div class="stat"><b id="s-bans">-</b><span>Banned</span></div>
+      </div>
+      <p class="muted" id="s-chat"></p>
+    </section>
+
+    <section data-panel="players" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="p-q">Search name or UserId</label><input type="text" id="p-q" placeholder="player name or 123456"></div>
+          <label class="f" style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" id="p-all"> Include offline</label>
+          <button class="btn small" id="p-refresh" type="button">Refresh</button>
+        </div>
+        <div class="bar">
+          <div><label class="f" for="p-role">Role for the "Give role" button</label><select id="p-role"><option>VIP</option><option>DONATOR</option><option>PARTNER</option><option>CONTENT CREATOR</option><option>ADMIN</option><option>NOX WIFE</option><option>OWNER</option></select></div>
+          <div><label class="f" for="p-days">Days (0 = no expiry)</label><input type="number" id="p-days" value="0" min="0"></div>
+        </div>
+        <div class="muted" id="p-info"></div>
+        <div id="p-out"></div>
+      </div>
+      <div style="overflow-x:auto"><table class="tbl" id="p-table"></table></div>
+    </section>
+
+    <section data-panel="roles" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="r-uid">Roblox UserId</label><input type="text" id="r-uid" placeholder="123456789" inputmode="numeric"></div>
+          <div><label class="f" for="r-name">Roblox name (optional)</label><input type="text" id="r-name"></div>
+          <div><label class="f" for="r-role">Role</label><select id="r-role"><option>VIP</option><option>DONATOR</option><option>PARTNER</option><option>CONTENT CREATOR</option><option>ADMIN</option><option>NOX WIFE</option><option>OWNER</option></select></div>
+          <div><label class="f" for="r-days">Days (0 = no expiry)</label><input type="number" id="r-days" value="0" min="0"></div>
+        </div>
+        <div class="bar">
+          <div><label class="f" for="r-note">Note</label><input type="text" id="r-note" placeholder="who / why"></div>
+          <button class="btn solid" id="r-save" type="button">Give role</button>
+          <button class="btn small" id="r-json" type="button">Copy roles.json</button>
+        </div>
+        <div id="r-out"></div>
+      </div>
+      <input type="text" class="filter" id="r-filter" placeholder="Filter roles...">
+      <div style="overflow-x:auto"><table class="tbl" id="r-table"></table></div>
+    </section>
+
+    <section data-panel="licenses" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="l-tier">Rank</label><select id="l-tier"><option>VIP</option><option>DONATOR</option><option>PARTNER</option><option>CONTENT CREATOR</option><option>ADMIN</option><option>NOX WIFE</option><option>OWNER</option><option>TRIAL</option></select></div>
+          <div><label class="f" for="l-days">Days (0 = never expires)</label><input type="number" id="l-days" value="30" min="0"></div>
+          <div><label class="f" for="l-count">How many</label><input type="number" id="l-count" value="1" min="1" max="50"></div>
+          <div><label class="f" for="l-hwid">Devices per key</label><input type="number" id="l-hwid" value="3" min="1" max="10"></div>
+        </div>
+        <div class="bar">
+          <div><label class="f" for="l-note">Note</label><input type="text" id="l-note" placeholder="who it is for"></div>
+          <div><label class="f" for="l-discord">Discord ID (optional)</label><input type="text" id="l-discord"></div>
+          <button class="btn solid" id="l-create" type="button">Create</button>
+        </div>
+        <div id="l-out"></div>
+      </div>
+      <input type="text" class="filter" id="l-filter" placeholder="Filter keys...">
+      <div style="overflow-x:auto"><table class="tbl" id="l-table"></table></div>
+    </section>
+
+    <section data-panel="announce" class="stack hidden">
+      <div class="panel stack">
+        <div><label class="f" for="a-title">Title</label><input type="text" id="a-title" maxlength="80"></div>
+        <div><label class="f" for="a-text">Message</label><textarea id="a-text" maxlength="400"></textarea></div>
+        <div class="bar">
+          <div><label class="f" for="a-author">From</label><input type="text" id="a-author" value="NOX"></div>
+          <div><label class="f" for="a-role">Role label</label><input type="text" id="a-role" placeholder="OWNER"></div>
+          <div><label class="f" for="a-dur">Seconds on screen</label><input type="number" id="a-dur" value="15" min="5" max="60"></div>
+          <button class="btn solid" id="a-send" type="button">Send to everyone</button>
+        </div>
+        <div id="a-out"></div>
+      </div>
+      <ul class="news-list" id="a-list"></ul>
+    </section>
+
+    <section data-panel="comments" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="m-name">Name</label><input type="text" id="m-name" value="NOX" maxlength="24"></div>
+          <div><label class="f" for="m-role">Rank label</label><select id="m-role"><option>OWNER</option><option>ADMIN</option><option>STAFF</option><option>PARTNER</option><option>CONTENT CREATOR</option><option>NOX WIFE</option></select></div>
+        </div>
+        <div><label class="f" for="m-text">Comment</label><textarea id="m-text" maxlength="500"></textarea></div>
+        <div class="bar">
+          <label class="f" style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" id="m-pin"> Pin to top</label>
+          <button class="btn solid" id="m-post" type="button">Post as staff</button>
+        </div>
+        <div id="m-out"></div>
+      </div>
+      <input type="text" class="filter" id="m-filter" placeholder="Filter comments...">
+      <div style="overflow-x:auto"><table class="tbl" id="m-table"></table></div>
+    </section>
+
+    <section data-panel="chat" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="c-msg">Pause message</label><input type="text" id="c-msg" placeholder="Shown to players while chat is paused"></div>
+          <button class="btn" id="c-pause" type="button">Pause chat</button>
+          <button class="btn" id="c-resume" type="button">Resume chat</button>
+        </div>
+        <div><label class="f" for="c-bad">Blocked words (comma separated)</label><textarea id="c-bad"></textarea></div>
+        <button class="btn small" id="c-badsave" type="button">Save blocked words</button>
+        <div id="c-out"></div>
+      </div>
+      <div style="overflow-x:auto"><table class="tbl" id="c-table"></table></div>
+    </section>
+
+    <section data-panel="bans" class="stack hidden">
+      <div class="panel stack">
+        <div class="bar">
+          <div><label class="f" for="b-uid">Roblox UserId</label><input type="text" id="b-uid" inputmode="numeric"></div>
+          <div><label class="f" for="b-reason">Reason</label><input type="text" id="b-reason"></div>
+          <button class="btn solid" id="b-add" type="button">Ban</button>
+        </div>
+        <div id="b-out"></div>
+      </div>
+      <input type="text" class="filter" id="b-filter" placeholder="Filter bans...">
+      <div style="overflow-x:auto"><table class="tbl" id="b-table"></table></div>
+    </section>
+
+    <section data-panel="activity" class="stack hidden">
+      <div class="bar"><p class="muted" style="margin:0;flex:1">Everything done from this panel in the last 90 days.</p><button class="btn small" id="act-refresh" type="button">Refresh</button></div>
+      <div style="overflow-x:auto"><table class="tbl" id="act-table"></table></div>
+    </section>
+  </div>
+</div>
+</main>
+
+<script>
+(function () {
+  var token = sessionStorage.getItem("nox_admin") || "";
+  var API = (localStorage.getItem("nox_api") || "").replace(/\/+$/, "");
+  var COLORS = { VIP: "#6edc8c", DONATOR: "#ffcd50", PARTNER: "#5ac8eb", "CONTENT CREATOR": "#af7dff", ADMIN: "#ff5f5f",
+    "NOX WIFE": "#ff7dbe", OWNER: "#ffa537", TRIAL: "#5ac8eb", STAFF: "#ff5f5f", FREE: "#8b877e" };
+  var refreshTimer = null;
+
+  function $(s) { return document.querySelector(s); }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function fmt(ts) {
+    if (!ts) return "-";
+    return new Date(ts * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  }
+  function ago(sec) {
+    if (sec < 5) return "now";
+    if (sec < 60) return sec + "s ago";
+    if (sec < 3600) return Math.floor(sec / 60) + "m ago";
+    if (sec < 86400) return Math.floor(sec / 3600) + "h ago";
+    return Math.floor(sec / 86400) + "d ago";
+  }
+  function pill(role) {
+    var p = el("span", "pill", role);
+    p.style.setProperty("--c", COLORS[role] || "#8b877e");
+    return p;
+  }
+  function profileLink(uid) {
+    var a = el("a", null, uid);
+    a.href = "https://www.roblox.com/users/" + encodeURIComponent(uid) + "/profile";
+    a.target = "_blank"; a.rel = "noopener";
+    return a;
+  }
+
+  function call(path, body) {
+    if (!API) return Promise.reject(new Error("Enter the server address first"));
+    return fetch(API + path, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-admin-token": token },
+      body: JSON.stringify(body || {}),
+    }).then(function (r) {
+      if (r.status === 403) { signOut(); throw new Error("Wrong token"); }
+      return r.json();
+    });
+  }
+  function say(box, text, bad) { box.textContent = ""; box.appendChild(el("span", bad ? "err" : "ok", text)); }
+
+  function table(node, headers, rows) {
+    node.textContent = "";
+    var thead = el("thead"), tr = el("tr");
+    headers.forEach(function (h) { tr.appendChild(el("th", null, h)); });
+    thead.appendChild(tr); node.appendChild(thead);
+    var tbody = el("tbody");
+    rows.forEach(function (cells) {
+      var r = el("tr");
+      cells.forEach(function (c) {
+        var td = el("td", c && c.act ? "act" : null);
+        if (c && c.nodes) c.nodes.forEach(function (n) { td.appendChild(n); });
+        else td.textContent = c == null ? "" : String(c);
+        r.appendChild(td);
+      });
+      tbody.appendChild(r);
+    });
+    if (!rows.length) { var e = el("tr"), td = el("td", "muted", "Nothing here yet."); td.colSpan = headers.length; e.appendChild(td); tbody.appendChild(e); }
+    node.appendChild(tbody);
+    var f = node.id && $("#" + node.id.replace("-table", "-filter"));
+    if (f && f.value) applyFilter(node, f.value);
+  }
+  function applyFilter(node, text) {
+    var q = text.toLowerCase();
+    node.querySelectorAll("tbody tr").forEach(function (r) { r.style.display = r.textContent.toLowerCase().indexOf(q) === -1 ? "none" : ""; });
+  }
+  ["r", "l", "m", "b"].forEach(function (k) {
+    $("#" + k + "-filter").addEventListener("input", function () { applyFilter($("#" + k + "-table"), this.value); });
+  });
+  function btn(label, fn, cls) {
+    var b = el("button", "btn small" + (cls ? " " + cls : ""), label);
+    b.type = "button"; b.addEventListener("click", fn); return b;
+  }
+  function copyText(text, button) {
+    var done = function () { var o = button.textContent; button.textContent = "Copied"; setTimeout(function () { button.textContent = o; }, 1200); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
+  }
+
+  /* ---------------------------------------------------------------- auth */
+  function showApp() { $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); loadOverview(); }
+  function signOut() {
+    token = ""; sessionStorage.removeItem("nox_admin");
+    clearInterval(refreshTimer);
+    $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
+  }
+  $("#apiurl").value = API;
+  $("#signin").addEventListener("click", function () {
+    API = $("#apiurl").value.trim().replace(/\/+$/, "");
+    localStorage.setItem("nox_api", API);
+    token = $("#tok").value.trim();
+    $("#login-err").textContent = "";
+    call("/admin/stats").then(function (d) {
+      if (d && d.ok) { sessionStorage.setItem("nox_admin", token); $("#tok").value = ""; showApp(); }
+    }).catch(function (e) { $("#login-err").textContent = e.message; });
+  });
+  $("#tok").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#signin").click(); });
+  $("#signout").addEventListener("click", signOut);
+
+  /* ---------------------------------------------------------------- tabs */
+  var loaders = { overview: loadOverview, players: loadPlayers, roles: loadRoles, licenses: loadLicenses, announce: loadAnnouncements,
+    comments: loadComments, chat: loadChat, bans: loadBans, activity: loadActivity };
+  document.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var name = b.getAttribute("data-tab");
+      document.querySelectorAll("[data-tab]").forEach(function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      document.querySelectorAll("[data-panel]").forEach(function (p) { p.classList.toggle("hidden", p.getAttribute("data-panel") !== name); });
+      clearInterval(refreshTimer);
+      if (name === "players") refreshTimer = setInterval(loadPlayers, 10000);
+      if (name === "overview") refreshTimer = setInterval(loadOverview, 15000);
+      if (loaders[name]) loaders[name]();
+    });
+  });
+
+  /* ------------------------------------------------------------ overview */
+  function loadOverview() {
+    call("/admin/stats").then(function (d) {
+      if (!d.ok) return;
+      $("#s-online").textContent = d.online; $("#s-licenses").textContent = d.licenses; $("#s-bans").textContent = d.bans;
+      $("#s-chat").textContent = d.chat_paused ? "Game chat is paused." + (d.chat_pause_msg ? " Message: " + d.chat_pause_msg : "") : "Game chat is running.";
+    }).catch(function () {});
+  }
+
+  /* ---------------------------------------------------------- live players */
+  function loadPlayers() {
+    call("/admin/players", { q: $("#p-q").value, all: $("#p-all").checked }).then(function (d) {
+      if (!d.ok) return;
+      $("#p-info").textContent = d.online + (d.online === 1 ? " player online now" : " players online now") + ". Updates every 10 seconds.";
+      var rows = d.items.map(function (p) {
+        var online = d.now - p.last_seen <= 65;
+        var who = el("span"); who.appendChild(el("span", online ? "dot" : "")); who.appendChild(document.createTextNode(p.display && p.display !== p.name ? p.display : p.name));
+        return [
+          { nodes: [who] },
+          p.name,
+          { nodes: [profileLink(p.uid)] },
+          { nodes: [pill(p.tier || "FREE")] },
+          p.game || "",
+          ago(d.now - p.last_seen),
+          { act: true, nodes: [
+            btn("Give role", function () {
+              call("/admin/roles/set", { uid: p.uid, name: p.name, role: $("#p-role").value, days: parseInt($("#p-days").value, 10) || 0 })
+                .then(function (r) { say($("#p-out"), r.ok ? "Gave " + $("#p-role").value + " to " + p.name + "." : "Failed: " + (r.error || "error"), !r.ok); loadPlayers(); });
+            }),
+            btn("Ban", function () {
+              var reason = window.prompt("Ban " + p.name + " (" + p.uid + "). Reason:", "");
+              if (reason === null) return;
+              call("/admin/ban", { uid: p.uid, reason: reason }).then(function (r) { say($("#p-out"), r.ok ? p.name + " banned." : "Failed", !r.ok); loadPlayers(); });
+            }),
+          ] },
+        ];
+      });
+      table($("#p-table"), ["Player", "Roblox name", "UserId", "Rank", "Game", "Seen", ""], rows);
+    }).catch(function (e) { $("#p-info").textContent = e.message; });
+  }
+  $("#p-refresh").addEventListener("click", loadPlayers);
+  $("#p-q").addEventListener("keydown", function (e) { if (e.key === "Enter") loadPlayers(); });
+  $("#p-all").addEventListener("change", loadPlayers);
+
+  /* ---------------------------------------------------------------- roles */
+  var lastRoles = [];
+  function loadRoles() {
+    call("/admin/roles/list").then(function (d) {
+      if (!d.ok) return;
+      lastRoles = d.items;
+      var now = Math.floor(Date.now() / 1000);
+      var rows = d.items.map(function (r) {
+        var expired = r.expires && r.expires < now;
+        return [
+          { nodes: [profileLink(r.uid)] }, r.name || r.seen_name || "", { nodes: [pill(r.role)] },
+          r.expires ? (expired ? "expired " : "") + fmt(r.expires) : "never", r.note || "",
+          { act: true, nodes: [btn("Remove", function () { call("/admin/roles/remove", { uid: r.uid }).then(loadRoles); })] },
+        ];
+      });
+      table($("#r-table"), ["UserId", "Name", "Role", "Expires", "Note", ""], rows);
+    }).catch(function () {});
+  }
+  $("#r-save").addEventListener("click", function () {
+    var out = $("#r-out");
+    call("/admin/roles/set", { uid: $("#r-uid").value, name: $("#r-name").value, role: $("#r-role").value,
+      days: parseInt($("#r-days").value, 10) || 0, note: $("#r-note").value }).then(function (d) {
+      if (!d.ok) { say(out, d.error === "bad_uid" ? "UserId must be digits only." : "Failed: " + (d.error || "error"), true); return; }
+      say(out, "Role saved. The player gets it within a few seconds (server) or on the next roles.json check.");
+      $("#r-uid").value = ""; $("#r-name").value = ""; $("#r-note").value = "";
+      loadRoles();
+    }).catch(function (e) { say(out, e.message, true); });
+  });
+  $("#r-json").addEventListener("click", function () {
+    var map = {};
+    lastRoles.forEach(function (r) {
+      var entry = { role: r.role };
+      if (r.name) entry.name = r.name;
+      if (r.expires) entry["until"] = new Date(r.expires * 1000).toISOString().slice(0, 10);
+      map[r.uid] = entry;
+    });
+    copyText(JSON.stringify(map, null, 2), this);
+  });
+
+  /* ------------------------------------------------------------- licenses */
+  function loadLicenses() {
+    call("/admin/license/list").then(function (d) {
+      var rows = (d.items || []).map(function (l) {
+        var state = l.revoked ? "revoked" : (l.expires && l.expires * 1000 < Date.now() ? "expired" : "valid");
+        return [l.key, { nodes: [pill(l.tier)] }, state, l.expires ? fmt(l.expires) : "never", l.devices + "/" + l.max_hwid, l.note || "", { act: true, nodes: [
+          btn("Copy", function () { copyText(l.key, this); }),
+          btn(l.revoked ? "Restore" : "Revoke", function () { call("/admin/license/revoke", { key: l.key, undo: !!l.revoked }).then(loadLicenses); }),
+          btn("Reset devices", function () { call("/admin/license/resethwid", { key: l.key }).then(loadLicenses); }),
+          btn("+ Days", function () {
+            var v = window.prompt("Add how many days to this key?", "30");
+            if (!v) return;
+            call("/admin/license/extend", { key: l.key, days: parseInt(v, 10) || 0 }).then(function (r) {
+              if (!r.ok) window.alert(r.error === "no_expiry" ? "This key never expires." : "Failed: " + (r.error || "error"));
+              loadLicenses();
+            });
+          }),
+        ] }];
+      });
+      table($("#l-table"), ["Key", "Rank", "State", "Expires", "Devices", "Note", ""], rows);
+    }).catch(function () {});
+  }
+  $("#l-create").addEventListener("click", function () {
+    var out = $("#l-out");
+    call("/admin/license/create", { tier: $("#l-tier").value, days: parseInt($("#l-days").value, 10) || 0, count: parseInt($("#l-count").value, 10) || 1,
+      max_hwid: parseInt($("#l-hwid").value, 10) || 3, note: $("#l-note").value, discord_id: $("#l-discord").value }).then(function (d) {
+      if (!d.ok) { say(out, "Failed: " + (d.error || "error"), true); return; }
+      out.textContent = ""; out.appendChild(el("div", "keybox", d.keys.join("\n"))); loadLicenses();
+    }).catch(function (e) { say(out, e.message, true); });
+  });
+
+  /* ---------------------------------------------------------- announcements */
+  function loadAnnouncements() {
+    fetch(API + "/public/announcements", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+      var list = $("#a-list"); list.textContent = "";
+      (d.items || []).forEach(function (a) {
+        var li = el("li", "news-item");
+        li.appendChild(el("time", null, fmt(a.ts)));
+        var body = el("div");
+        body.appendChild(el("h3", null, a.title)); body.appendChild(el("p", null, a.text));
+        var del = btn("Delete", function () { call("/admin/announce/delete", { id: a.id }).then(loadAnnouncements); });
+        del.style.marginTop = "10px"; body.appendChild(del);
+        li.appendChild(body); list.appendChild(li);
+      });
+    }).catch(function () {});
+  }
+  $("#a-send").addEventListener("click", function () {
+    var out = $("#a-out");
+    call("/admin/announce", { title: $("#a-title").value, text: $("#a-text").value, author: $("#a-author").value, role: $("#a-role").value,
+      duration: parseInt($("#a-dur").value, 10) || 15 }).then(function (d) {
+      if (!d.ok) { say(out, "Failed: " + (d.error || "error"), true); return; }
+      say(out, "Sent. Players see it within a few seconds.");
+      $("#a-title").value = ""; $("#a-text").value = ""; loadAnnouncements();
+    }).catch(function (e) { say(out, e.message, true); });
+  });
+
+  /* -------------------------------------------------------------- comments */
+  function loadComments() {
+    call("/admin/comments/list").then(function (d) {
+      var rows = (d.items || []).map(function (c) {
+        return [fmt(c.ts), c.name + (c.verified ? " \u2713" : ""), { nodes: [pill(c.role)] }, c.text + (c.pinned ? "  [pinned]" : ""), { act: true, nodes: [
+          btn(c.pinned ? "Unpin" : "Pin", function () { call("/admin/comments/pin", { id: c.id, pinned: !c.pinned }).then(loadComments); }),
+          btn("Delete", function () { call("/admin/comments/delete", { id: c.id }).then(loadComments); }),
+        ] }];
+      });
+      table($("#m-table"), ["Time", "Name", "Rank", "Comment", ""], rows);
+    }).catch(function () {});
+  }
+  $("#m-post").addEventListener("click", function () {
+    var out = $("#m-out");
+    call("/admin/comments/post", { name: $("#m-name").value, role: $("#m-role").value, text: $("#m-text").value, pinned: $("#m-pin").checked }).then(function (d) {
+      if (!d.ok) { say(out, "Failed: " + (d.error || "error"), true); return; }
+      say(out, "Posted."); $("#m-text").value = ""; loadComments();
+    }).catch(function (e) { say(out, e.message, true); });
+  });
+
+  /* ------------------------------------------------------------ game chat */
+  function loadChat() {
+    call("/admin/stats").then(function (d) { if (d.ok) $("#c-bad").value = d.badwords || ""; });
+    call("/admin/chat/recent").then(function (d) {
+      var rows = (d.items || []).map(function (m) {
+        return [fmt(m.ts), m.name, m.uid, m.text, { act: true, nodes: [
+          btn("Delete", function () { call("/admin/chat/delete", { id: m.id }).then(loadChat); }),
+          btn("Ban", function () { call("/admin/ban", { uid: m.uid, reason: "chat" }).then(loadChat); }),
+        ] }];
+      });
+      table($("#c-table"), ["Time", "Name", "UserId", "Message", ""], rows);
+    }).catch(function () {});
+  }
+  $("#c-pause").addEventListener("click", function () { call("/admin/chat/pause", { paused: true, message: $("#c-msg").value }).then(function () { say($("#c-out"), "Chat paused."); }); });
+  $("#c-resume").addEventListener("click", function () { call("/admin/chat/pause", { paused: false }).then(function () { say($("#c-out"), "Chat running."); }); });
+  $("#c-badsave").addEventListener("click", function () { call("/admin/badwords", { words: $("#c-bad").value }).then(function () { say($("#c-out"), "Blocked words saved."); }); });
+
+  /* ------------------------------------------------------------------ bans */
+  function loadBans() {
+    call("/admin/bans").then(function (d) {
+      var rows = (d.items || []).map(function (b) {
+        return [{ nodes: [profileLink(b.uid)] }, b.reason || "", fmt(b.ts), { act: true, nodes: [btn("Unban", function () { call("/admin/unban", { uid: b.uid }).then(loadBans); })] }];
+      });
+      table($("#b-table"), ["UserId", "Reason", "When", ""], rows);
+    }).catch(function () {});
+  }
+  $("#b-add").addEventListener("click", function () {
+    var out = $("#b-out");
+    call("/admin/ban", { uid: $("#b-uid").value, reason: $("#b-reason").value }).then(function (d) {
+      if (!d.ok) { say(out, "Failed: " + (d.error || "error"), true); return; }
+      say(out, "Banned. They are kicked on their next sync."); $("#b-uid").value = ""; $("#b-reason").value = ""; loadBans();
+    }).catch(function (e) { say(out, e.message, true); });
+  });
+
+  /* -------------------------------------------------------------- activity */
+  function loadActivity() {
+    call("/admin/audit").then(function (d) {
+      table($("#act-table"), ["Time", "Action", "Details"], (d.items || []).map(function (a) { return [fmt(a.ts), a.action, a.detail || ""]; }));
+    }).catch(function () {});
+  }
+  $("#act-refresh").addEventListener("click", loadActivity);
+
+  if (token) call("/admin/stats").then(function (d) { if (d && d.ok) showApp(); else signOut(); }).catch(signOut);
+})();
+</script>
+</body>
+</html>
